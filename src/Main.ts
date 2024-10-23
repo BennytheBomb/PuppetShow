@@ -1,2 +1,3 @@
 import "./HandDemo";
-import "./HandThree"
+import "./HandScene"
+// import "./RotationDebugScene"

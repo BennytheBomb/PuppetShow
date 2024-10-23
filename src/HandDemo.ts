@@ -4,8 +4,9 @@ import {
 } from "@mediapipe/tasks-vision";
 import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
 import {HAND_CONNECTIONS} from "@mediapipe/hands";
-import {HandPose} from "./HandPose";
+import {HandPose, HandSide} from "./HandPose";
 import {Vector3} from "three";
+import {HandPoseRecording} from "./HandPoseRecording";
 
 // const demosSection = document.getElementById("demos");
 
@@ -34,6 +35,18 @@ const canvasElement = document.getElementById(
     "output_canvas"
 ) as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext("2d");
+const button = document.getElementById("recordButton") as HTMLButtonElement;
+let recording = false;
+button.addEventListener("click", () => {
+    recording = !recording;
+    button.innerHTML = recording ? "Stop Recording" : "Record";
+
+    if (recording) {
+        handPoseRecording.startRecording(performance.now());
+    } else {
+        handPoseRecording.stopRecording(performance.now());
+    }
+});
 
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
@@ -61,6 +74,7 @@ function enableCam() {
 
 let lastVideoTime = -1;
 let results: HandLandmarkerResult;
+const handPoseRecording: HandPoseRecording = new HandPoseRecording();
 export let handPoses: HandPose[] = [];
 
 console.log(video);
@@ -91,7 +105,13 @@ async function predictWebcam() {
         lastVideoTime = video.currentTime;
         results = handLandmarker.detectForVideo(video, startTimeMs);
         if (results && results.handednesses) {
-            handPoses = buildHandPoses(results);
+            handPoses = buildHandPoses(results, startTimeMs);
+
+            if (recording) {
+                handPoses.forEach(handPose => {
+                    handPoseRecording.recordHandPose(handPose, handPose.side);
+                });
+            }
         }
     }
 
@@ -102,13 +122,13 @@ async function predictWebcam() {
     }
 }
 
-function buildHandPoses(handLandmarkerResult: HandLandmarkerResult): HandPose[] {
+function buildHandPoses(handLandmarkerResult: HandLandmarkerResult, timestamp: number): HandPose[] {
    return handLandmarkerResult.handednesses.map((handedness, index) => {
-        const categoryName = handedness[0].categoryName;
+        const categoryName = handedness[0].categoryName as HandSide;
         const score = handedness[0].score;
         // World landmarks are normalized
         const positions = handLandmarkerResult.worldLandmarks[index].map(landmark => new Vector3(landmark.x, landmark.y, landmark.z));
 
-        return new HandPose(score, positions, categoryName);
-    });
+        return new HandPose(score, positions, categoryName, timestamp);
+   });
 }
