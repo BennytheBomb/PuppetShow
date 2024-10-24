@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {handPoseRecording, handPoses} from "./HandDemo";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Hand } from "./Hand";
+import {HandPose} from "./HandPose";
 
 let scene: THREE.Scene;
 let origin: THREE.Object3D;
@@ -58,6 +59,16 @@ export function playbackRecording() {
 let leftHandPoseIndex: number;
 let rightHandPoseIndex: number;
 
+function updateHand(hand: Hand, handPoses: HandPose[], index: number, timeSinceStart: number) {
+    if (handPoses.length > 0) {
+        while (index < handPoses.length - 1 && handPoses[index].timestamp < timeSinceStart) {
+            index++;
+        }
+
+        hand.update(handPoses[index].positions);
+    }
+}
+
 function render() {
     const leftHandPoses = handPoseRecording.leftHandPoses;
     const rightHandPoses = handPoseRecording.rightHandPoses;
@@ -66,17 +77,8 @@ function render() {
     const timeSinceStart = currentTime - startPlaybackTime;
 
     if (timeSinceStart <= handPoseRecording.duration) {
-        while (leftHandPoseIndex < leftHandPoses.length - 1 && leftHandPoses[leftHandPoseIndex].timestamp < timeSinceStart) {
-            leftHandPoseIndex++;
-        }
-
-        leftHand.update(leftHandPoses[leftHandPoseIndex].positions);
-
-        while (rightHandPoseIndex < rightHandPoses.length - 1 && rightHandPoses[rightHandPoseIndex].timestamp < timeSinceStart) {
-            rightHandPoseIndex++;
-        }
-
-        rightHand.update(rightHandPoses[rightHandPoseIndex].positions);
+        updateHand(leftHand, leftHandPoses, leftHandPoseIndex, timeSinceStart);
+        updateHand(rightHand, rightHandPoses, rightHandPoseIndex, timeSinceStart);
     }
 
     controls.update();

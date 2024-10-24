@@ -44,7 +44,7 @@ recordButton.addEventListener("click", () => {
     recordButton.innerHTML = recording ? "Stop Recording" : "Record";
 
     if (recording) {
-        handPoseRecording.startRecording(performance.now());
+        handPoseRecording.startRecording();
     } else {
         handPoseRecording.stopRecording(performance.now());
     }

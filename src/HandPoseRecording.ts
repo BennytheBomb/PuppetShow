@@ -3,6 +3,7 @@ import {HandPose, HandSide} from "./HandPose";
 export class HandPoseRecording {
     private static readonly CONFIDENCE_SCORE_THRESHOLD = 0.7;
     private static readonly MOTION_SCORE_MIN_THRESHOLD = 0.01;
+    private static readonly RECORDING_TIME_INTERVAL = 100;
 
     private _leftHandPoses: HandPose[] = [];
     private _rightHandPoses: HandPose[] = [];
@@ -20,20 +21,12 @@ export class HandPoseRecording {
         return this._rightHandPoses;
     }
 
-    public get startTime(): number {
-        return this._startTime;
-    }
-
-    public get endTime(): number {
-        return this._endTime;
-    }
-
     public get duration(): number {
         return this._endTime - this._startTime;
     }
 
     public get hasRecording(): boolean {
-        return this._leftHandPoses.length > 0 || this._rightHandPoses.length > 0;
+        return (this._leftHandPoses.length > 0 || this._rightHandPoses.length > 0) && this.duration > 0;
     }
 
     public startRecording() {
@@ -60,8 +53,14 @@ export class HandPoseRecording {
 
         const previousHandPose = side === "Left" ? this._previousLeftHandPose : this._previousRightHandPose;
 
+        handPose.timestamp -= this._startTime; // Normalize to start time
+
         if (previousHandPose === null) { // first hand pose
             this.addHandPose(handPose, side);
+            return;
+        }
+
+        if (Math.abs(handPose.timestamp - previousHandPose.timestamp) < HandPoseRecording.RECORDING_TIME_INTERVAL) {
             return;
         }
 
@@ -76,7 +75,6 @@ export class HandPoseRecording {
     }
 
     private addHandPose(handPose: HandPose, side: HandSide) {
-        handPose.timestamp -= this._startTime; // Normalize to start time
         if (side === "Left") {
             this._leftHandPoses.push(handPose);
             this._previousLeftHandPose = handPose;
