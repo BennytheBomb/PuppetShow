@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { handPoses } from "./HandDemo";
+import {handPoseRecording, handPoses} from "./HandDemo";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Hand } from "./Hand";
 
@@ -10,6 +10,8 @@ let rightHand: Hand;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
+
+let startPlaybackTime = -1;
 
 const joints = 21;
 
@@ -43,17 +45,38 @@ function setup() {
     rightHand.rotateZ(Math.PI);
 
     controls = new OrbitControls(camera, renderer.domElement);
+}
+
+export function playbackRecording() {
+    startPlaybackTime = performance.now();
+    leftHandPoseIndex = 0;
+    rightHandPoseIndex = 0;
 
     renderer.setAnimationLoop(render);
 }
 
+let leftHandPoseIndex: number;
+let rightHandPoseIndex: number;
+
 function render() {
-    for (let handPose of handPoses) {
-        // if (handPose.side === "Right") continue;
+    const leftHandPoses = handPoseRecording.leftHandPoses;
+    const rightHandPoses = handPoseRecording.rightHandPoses;
+    const currentTime = performance.now();
 
-        const hand = handPose.side === "Left" ? leftHand : rightHand;
+    const timeSinceStart = currentTime - startPlaybackTime;
 
-        hand.update(handPose.positions);
+    if (timeSinceStart <= handPoseRecording.duration) {
+        while (leftHandPoseIndex < leftHandPoses.length - 1 && leftHandPoses[leftHandPoseIndex].timestamp < timeSinceStart) {
+            leftHandPoseIndex++;
+        }
+
+        leftHand.update(leftHandPoses[leftHandPoseIndex].positions);
+
+        while (rightHandPoseIndex < rightHandPoses.length - 1 && rightHandPoses[rightHandPoseIndex].timestamp < timeSinceStart) {
+            rightHandPoseIndex++;
+        }
+
+        rightHand.update(rightHandPoses[rightHandPoseIndex].positions);
     }
 
     controls.update();

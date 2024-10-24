@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { calculateCenter } from "./helpers/VectorHelper";
-import {HandSide} from "./HandPose";
+import { HandSide } from "./HandPose";
 
 export class Hand extends THREE.Object3D {
     private debugVisualizer: THREE.Object3D;

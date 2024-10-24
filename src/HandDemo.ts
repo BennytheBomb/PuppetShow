@@ -7,6 +7,7 @@ import {HAND_CONNECTIONS} from "@mediapipe/hands";
 import {HandPose, HandSide} from "./HandPose";
 import {Vector3} from "three";
 import {HandPoseRecording} from "./HandPoseRecording";
+import {playbackRecording} from "./HandScene";
 
 // const demosSection = document.getElementById("demos");
 
@@ -35,16 +36,23 @@ const canvasElement = document.getElementById(
     "output_canvas"
 ) as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext("2d");
-const button = document.getElementById("recordButton") as HTMLButtonElement;
+const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
+const playbackButton = document.getElementById("playbackButton") as HTMLButtonElement;
 let recording = false;
-button.addEventListener("click", () => {
+recordButton.addEventListener("click", () => {
     recording = !recording;
-    button.innerHTML = recording ? "Stop Recording" : "Record";
+    recordButton.innerHTML = recording ? "Stop Recording" : "Record";
 
     if (recording) {
         handPoseRecording.startRecording(performance.now());
     } else {
         handPoseRecording.stopRecording(performance.now());
+    }
+});
+
+playbackButton.addEventListener("click", () => {
+    if (handPoseRecording.hasRecording && !recording) {
+        playbackRecording();
     }
 });
 
@@ -74,7 +82,7 @@ function enableCam() {
 
 let lastVideoTime = -1;
 let results: HandLandmarkerResult;
-const handPoseRecording: HandPoseRecording = new HandPoseRecording();
+export const handPoseRecording: HandPoseRecording = new HandPoseRecording();
 export let handPoses: HandPose[] = [];
 
 console.log(video);

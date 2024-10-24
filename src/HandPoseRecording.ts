@@ -12,8 +12,37 @@ export class HandPoseRecording {
     private _previousLeftHandPose: HandPose = null;
     private _previousRightHandPose: HandPose = null;
 
-    public startRecording(startTime: number) {
-        this._startTime = startTime;
+    public get leftHandPoses(): HandPose[] {
+        return this._leftHandPoses;
+    }
+
+    public get rightHandPoses(): HandPose[] {
+        return this._rightHandPoses;
+    }
+
+    public get startTime(): number {
+        return this._startTime;
+    }
+
+    public get endTime(): number {
+        return this._endTime;
+    }
+
+    public get duration(): number {
+        return this._endTime - this._startTime;
+    }
+
+    public get hasRecording(): boolean {
+        return this._leftHandPoses.length > 0 || this._rightHandPoses.length > 0;
+    }
+
+    public startRecording() {
+        this._startTime = performance.now();
+        this._endTime = -1;
+        this._leftHandPoses = [];
+        this._rightHandPoses = [];
+        this._previousLeftHandPose = null;
+        this._previousRightHandPose = null;
     }
 
     public stopRecording(endTime: number) {
@@ -47,6 +76,7 @@ export class HandPoseRecording {
     }
 
     private addHandPose(handPose: HandPose, side: HandSide) {
+        handPose.timestamp -= this._startTime; // Normalize to start time
         if (side === "Left") {
             this._leftHandPoses.push(handPose);
             this._previousLeftHandPose = handPose;
