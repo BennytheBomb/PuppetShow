@@ -1,6 +1,7 @@
 import {
     HandLandmarker,
-    FilesetResolver, HandLandmarkerResult
+    FilesetResolver,
+    HandLandmarkerResult
 } from "@mediapipe/tasks-vision";
 import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
 import {HAND_CONNECTIONS} from "@mediapipe/hands";
@@ -8,12 +9,37 @@ import {HandPose, HandSide} from "./HandPose";
 import {Vector3} from "three";
 import {HandPoseRecording} from "./HandPoseRecording";
 import {playbackRecording} from "./HandScene";
-
-// const demosSection = document.getElementById("demos");
+import {IHandPoseRecordingData} from "./IHandPoseRecordingData";
 
 let handLandmarker: HandLandmarker;
 let runningMode = "VIDEO";
 let webcamRunning: Boolean = false;
+const video = document.getElementById("webcam") as HTMLVideoElement;
+const canvasElement = document.getElementById(
+    "output_canvas"
+) as HTMLCanvasElement;
+const canvasCtx = canvasElement.getContext("2d");
+const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
+const playbackButton = document.getElementById("playbackButton") as HTMLButtonElement;
+const downloadButton = document.getElementById("downloadButton") as HTMLButtonElement;
+const uploadButton = document.getElementById("uploadButton") as HTMLButtonElement;
+const input = document.getElementById("jsonFileInput") as HTMLInputElement;
+const uploadStatus = document.getElementById("uploadStatus") as HTMLSpanElement;
+let recording = false;
+let lastVideoTime = -1;
+let results: HandLandmarkerResult;
+export const handPoseRecording: HandPoseRecording = new HandPoseRecording();
+export let handPoses: HandPose[] = [];
+
+async function fetchJsonData() {
+    const response = await fetch('/recordings/data.json');
+    return await response.json();
+}
+
+fetchJsonData().then((data) => {
+    handPoseRecording.loadHandPoseRecordingData(data);
+    uploadStatus.innerHTML = "Loaded recording from server!";
+});
 
 const createHandLandmarker = async () => {
     const vision = await FilesetResolver.forVisionTasks(
@@ -31,14 +57,6 @@ const createHandLandmarker = async () => {
 };
 createHandLandmarker();
 
-const video = document.getElementById("webcam") as HTMLVideoElement;
-const canvasElement = document.getElementById(
-    "output_canvas"
-) as HTMLCanvasElement;
-const canvasCtx = canvasElement.getContext("2d");
-const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
-const playbackButton = document.getElementById("playbackButton") as HTMLButtonElement;
-let recording = false;
 recordButton.addEventListener("click", () => {
     recording = !recording;
     recordButton.innerHTML = recording ? "Stop Recording" : "Record";
@@ -55,6 +73,52 @@ playbackButton.addEventListener("click", () => {
         playbackRecording();
     }
 });
+
+downloadButton.addEventListener("click", () => {
+    if (handPoseRecording.hasRecording) {
+        var downloadableRecording = handPoseRecording.getDownloadableHandPoseRecordingData();
+        downloadJSON(downloadableRecording);
+    }
+});
+
+uploadButton.addEventListener("click", () => {
+    handleFileUpload();
+});
+
+function handleFileUpload() {
+    if (!input || !input.files || input.files.length === 0) {
+        alert("Please select a JSON file to upload.");
+        return;
+    }
+
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        try {
+            const handPoseRecordingData = JSON.parse(event.target?.result as string) as IHandPoseRecordingData;
+            handPoseRecording.loadHandPoseRecordingData(handPoseRecordingData);
+            uploadStatus.innerHTML = "Upload successful!";
+        } catch (e) {
+            alert("Invalid JSON file.");
+        }
+    };
+
+    reader.readAsText(file);
+}
+
+function downloadJSON(data: IHandPoseRecordingData, filename = 'data.json') {
+    const jsonStr = JSON.stringify(data, null, 2);  // Convert JSON object to a string
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
 
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
@@ -79,11 +143,6 @@ function enableCam() {
         video.addEventListener("loadeddata", predictWebcam);
     });
 }
-
-let lastVideoTime = -1;
-let results: HandLandmarkerResult;
-export const handPoseRecording: HandPoseRecording = new HandPoseRecording();
-export let handPoses: HandPose[] = [];
 
 console.log(video);
 
