@@ -1,9 +1,10 @@
 import {HandPose, HandSide} from "./HandPose";
+import {IHandPoseRecordingData} from "./IHandPoseRecordingData";
 
 export class HandPoseRecording {
     private static readonly CONFIDENCE_SCORE_THRESHOLD = 0.7;
     private static readonly MOTION_SCORE_MIN_THRESHOLD = 0.01;
-    private static readonly RECORDING_TIME_INTERVAL = 100;
+    private static readonly RECORDING_TIME_INTERVAL = 0;
 
     private _leftHandPoses: HandPose[] = [];
     private _rightHandPoses: HandPose[] = [];
@@ -39,7 +40,8 @@ export class HandPoseRecording {
     }
 
     public stopRecording(endTime: number) {
-        this._endTime = endTime;
+        this._endTime = endTime - this._startTime;
+        this._startTime = 0;
         console.log("recording duration: " + (this._endTime - this._startTime) + "ms");
         console.log("left hand poses recorded: " + this._leftHandPoses.length);
         console.log("right hand poses recorded: " + this._rightHandPoses.length);
@@ -72,6 +74,21 @@ export class HandPoseRecording {
         }
 
         this.addHandPose(handPose, side);
+    }
+
+    public getDownloadableHandPoseRecordingData(): IHandPoseRecordingData {
+        return {
+            leftHandPoses: this._leftHandPoses,
+            rightHandPoses: this._rightHandPoses,
+            duration: this.duration
+        };
+    }
+
+    public loadHandPoseRecordingData(handPoseRecording: IHandPoseRecordingData) {
+        this._leftHandPoses = handPoseRecording.leftHandPoses;
+        this._rightHandPoses = handPoseRecording.rightHandPoses;
+        this._startTime = 0;
+        this._endTime = handPoseRecording.duration;
     }
 
     private addHandPose(handPose: HandPose, side: HandSide) {
