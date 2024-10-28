@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { calculateCenter } from "./helpers/VectorHelper";
-import { HandSide } from "./HandPose";
+import { HandSide } from "./IHandPose";
+import {IPuppetHandFeatures} from "./IPuppetHandFeatures";
 
-export class Hand extends THREE.Object3D {
+export class HandPuppet extends THREE.Object3D {
     private debugVisualizer: THREE.Object3D;
     private debugMeshes: THREE.Object3D[] = [];
     private palmBox: THREE.Mesh;
@@ -120,20 +120,13 @@ export class Hand extends THREE.Object3D {
         }
     }
 
-    public update(positions: THREE.Vector3[]) {
-        const wristRaw = positions[0];
-        const thumbRaw = positions[4];
-        const handCenter = calculateCenter([positions[5], positions[9], positions[13], positions[17]]);
-        const fingerTopRaw = calculateCenter([positions[8], positions[12], positions[16], positions[20]]);
-        const rightPalmDirection = new THREE.Vector3().subVectors(handCenter, positions[17]).normalize();
-        const fingerTop = new THREE.Vector3();
-        const handHingePlane = new THREE.Plane().setFromNormalAndCoplanarPoint(rightPalmDirection, handCenter);
-        handHingePlane.projectPoint(fingerTopRaw, fingerTop);
-        const thumb = new THREE.Vector3();
-        handHingePlane.projectPoint(thumbRaw, thumb);
-        const wrist = new THREE.Vector3();
-        handHingePlane.projectPoint(wristRaw, wrist);
-        const palmCenter = calculateCenter([handCenter, wrist]);
+    public update(handFeatures: IPuppetHandFeatures) {
+        const palmCenter = handFeatures.palmCenter;
+        const handCenter = handFeatures.handCenter;
+        const wrist = handFeatures.wrist;
+        const fingerTop = handFeatures.fingerTop;
+        const thumb = handFeatures.thumb;
+        const rightPalmDirection = handFeatures.rightPalmDirection;
 
         {
             this.palmBox.position.copy(palmCenter);
@@ -166,12 +159,6 @@ export class Hand extends THREE.Object3D {
         {
             this.thumbBoxPivot.position.copy(wrist);
 
-            // const thumbBoxPivotForward = new THREE.Vector3(0, 0, 1).applyQuaternion(this.thumbBoxPivot.quaternion);
-            // const thumbFingerCenterDirection = new THREE.Vector3().subVectors(fingerTop, thumb).normalize();
-            // const thumbBoxPivotForwardRotation = new THREE.Quaternion().setFromUnitVectors(thumbBoxPivotForward, thumbFingerCenterDirection);
-            //
-            // this.thumbBoxPivot.rotation.setFromQuaternion(thumbBoxPivotForwardRotation.multiply(this.thumbBoxPivot.quaternion));
-
             const upThumbDirection = new THREE.Vector3().subVectors(thumb, wrist).normalize();
             const thumbBoxPivotUp = new THREE.Vector3(0, 1, 0).applyQuaternion(this.thumbBoxPivot.quaternion);
             const thumbBoxPivotUpRotation = new THREE.Quaternion().setFromUnitVectors(thumbBoxPivotUp, upThumbDirection);
@@ -190,9 +177,9 @@ export class Hand extends THREE.Object3D {
         this.fingerTopMesh.position.copy(fingerTop);
         this.palmCenterMesh.position.copy(palmCenter);
 
-        for (let i = 0; i < this.joints; i++) {
-            this.debugMeshes[i].position.copy(positions[i]);
-        }
+        // for (let i = 0; i < this.joints; i++) {
+        //     this.debugMeshes[i].position.copy(positions[i]);
+        // }
     }
 
     private updateDebugLine(start: THREE.Vector3, end: THREE.Vector3) {

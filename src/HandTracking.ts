@@ -3,13 +3,13 @@ import {
     FilesetResolver,
     HandLandmarkerResult
 } from "@mediapipe/tasks-vision";
-import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
-import {HAND_CONNECTIONS} from "@mediapipe/hands";
-import {HandPose, HandSide} from "./HandPose";
-import {Vector3} from "three";
-import {HandPoseRecording} from "./HandPoseRecording";
-import {playbackRecording} from "./HandScene";
-import {IHandPoseRecordingData} from "./IHandPoseRecordingData";
+import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
+import { HAND_CONNECTIONS } from "@mediapipe/hands";
+import { IHandPose, HandSide } from "./IHandPose";
+import { Vector3 } from "three";
+import { HandPoseRecording } from "./HandPoseRecording";
+import { playbackRecording } from "./HandScene";
+import { IPuppetPoseRecordingData } from "./IPuppetPoseRecordingData";
 
 let handLandmarker: HandLandmarker;
 let runningMode = "VIDEO";
@@ -29,10 +29,10 @@ let recording = false;
 let lastVideoTime = -1;
 let results: HandLandmarkerResult;
 export const handPoseRecording: HandPoseRecording = new HandPoseRecording();
-export let handPoses: HandPose[] = [];
+export let handPoses: IHandPose[] = [];
 
 async function fetchJsonData() {
-    const response = await fetch('/recordings/data.json');
+    const response = await fetch("/recordings/data.json");
     return await response.json();
 }
 
@@ -47,7 +47,7 @@ const createHandLandmarker = async () => {
     );
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
-            modelAssetPath: `../models/hand_landmarker.task`,
+            modelAssetPath: "../models/hand_landmarker.task",
             delegate: "GPU"
         },
         runningMode: runningMode,
@@ -96,7 +96,7 @@ function handleFileUpload() {
 
     reader.onload = function(event) {
         try {
-            const handPoseRecordingData = JSON.parse(event.target?.result as string) as IHandPoseRecordingData;
+            const handPoseRecordingData = JSON.parse(event.target?.result as string) as IPuppetPoseRecordingData;
             handPoseRecording.loadHandPoseRecordingData(handPoseRecordingData);
             uploadStatus.innerHTML = "Upload successful!";
         } catch (e) {
@@ -107,12 +107,12 @@ function handleFileUpload() {
     reader.readAsText(file);
 }
 
-function downloadJSON(data: IHandPoseRecordingData, filename = 'data.json') {
+function downloadJSON(data: IPuppetPoseRecordingData, filename = "data.json") {
     const jsonStr = JSON.stringify(data, null, 2);  // Convert JSON object to a string
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const blob = new Blob([jsonStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
     link.click();
@@ -176,7 +176,7 @@ async function predictWebcam() {
 
             if (recording) {
                 handPoses.forEach(handPose => {
-                    handPoseRecording.recordHandPose(handPose, handPose.side);
+                    handPoseRecording.recordHandPose(handPose);
                 });
             }
         }
@@ -189,13 +189,13 @@ async function predictWebcam() {
     }
 }
 
-function buildHandPoses(handLandmarkerResult: HandLandmarkerResult, timestamp: number): HandPose[] {
+function buildHandPoses(handLandmarkerResult: HandLandmarkerResult, timestamp: number): IHandPose[] {
    return handLandmarkerResult.handednesses.map((handedness, index) => {
-        const categoryName = handedness[0].categoryName as HandSide;
+        const side = handedness[0].categoryName as HandSide;
         const score = handedness[0].score;
         // World landmarks are normalized
         const positions = handLandmarkerResult.worldLandmarks[index].map(landmark => new Vector3(landmark.x, landmark.y, landmark.z));
 
-        return new HandPose(score, positions, categoryName, timestamp);
+        return { score, positions, side, timestamp };
    });
 }

@@ -1,14 +1,15 @@
 import * as THREE from 'three';
 import { handPoseRecording } from "./HandTracking";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Hand } from "./Hand";
-import { HandPose } from "./HandPose";
+import { HandPuppet } from "./HandPuppet";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { IPuppetPose } from "./IPuppetPose";
+import { IPuppetHandFeatures } from "./IPuppetHandFeatures";
 
 let scene: THREE.Scene;
 let origin: THREE.Object3D;
-let leftHand: Hand;
-let rightHand: Hand;
+let leftHand: HandPuppet;
+let rightHand: HandPuppet;
 let theatre: THREE.Group;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
@@ -24,7 +25,7 @@ setup();
 function setup() {
     const canvas = document.getElementById("sampleScene") as HTMLCanvasElement;
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x777777);
+    scene.background = new THREE.Color(0x000000);
     camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
 
     renderer = new THREE.WebGLRenderer();
@@ -34,9 +35,10 @@ function setup() {
     origin = new THREE.Object3D();
     origin.add(new THREE.AxesHelper(0.1));
     scene.add(origin);
+    origin.rotateY(Math.PI);
 
-    leftHand = new Hand(joints, 0x00ff00, "Left");
-    rightHand = new Hand(joints, 0xff0000, "Right");
+    leftHand = new HandPuppet(joints, 0x00ff00, "Left");
+    rightHand = new HandPuppet(joints, 0xff0000, "Right");
 
     origin.add(leftHand);
     origin.add(rightHand);
@@ -93,14 +95,36 @@ export function playbackRecording() {
 let leftHandPoseIndex: number;
 let rightHandPoseIndex: number;
 
-function updateHand(hand: Hand, handPoses: HandPose[], index: number, timeSinceStart: number) {
-    if (handPoses.length > 0) {
-        while (index < handPoses.length - 1 && handPoses[index].timestamp < timeSinceStart) {
+function updateHand(handPuppet: HandPuppet, puppetPoses: IPuppetPose[], index: number, timeSinceStart: number) {
+    if (puppetPoses.length > 0) {
+        while (index < puppetPoses.length - 1 && puppetPoses[index].timestamp < timeSinceStart) {
             index++;
         }
 
-        hand.update(handPoses[index].positions);
+        if (index === puppetPoses.length - 1) {
+            return;
+        }
+
+        const currentPuppetPose = puppetPoses[index];
+        const nextPuppetPose = puppetPoses[index + 1];
+        const duration = nextPuppetPose.timestamp - currentPuppetPose.timestamp;
+        const alpha = (timeSinceStart - currentPuppetPose.timestamp) / duration;
+
+        const lerpedHandFeatures = lerpPuppetHandFeatures(currentPuppetPose.handFeatures, nextPuppetPose.handFeatures, alpha);
+
+        handPuppet.update(lerpedHandFeatures);
     }
+}
+
+function lerpPuppetHandFeatures(currentFeatures: IPuppetHandFeatures, nextFeatures: IPuppetHandFeatures, alpha: number): IPuppetHandFeatures {
+    return {
+        palmCenter: new THREE.Vector3().lerpVectors(currentFeatures.palmCenter, nextFeatures.palmCenter, alpha),
+        handCenter: new THREE.Vector3().lerpVectors(currentFeatures.handCenter, nextFeatures.handCenter, alpha),
+        fingerTop: new THREE.Vector3().lerpVectors(currentFeatures.fingerTop, nextFeatures.fingerTop, alpha),
+        thumb: new THREE.Vector3().lerpVectors(currentFeatures.thumb, nextFeatures.thumb, alpha),
+        wrist: new THREE.Vector3().lerpVectors(currentFeatures.wrist, nextFeatures.wrist, alpha),
+        rightPalmDirection: new THREE.Vector3().lerpVectors(currentFeatures.rightPalmDirection, nextFeatures.rightPalmDirection, alpha),
+    };
 }
 
 function render() {
