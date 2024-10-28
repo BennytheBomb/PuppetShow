@@ -1,16 +1,19 @@
 import * as THREE from 'three';
-import {handPoseRecording, handPoses} from "./HandDemo";
+import { handPoseRecording } from "./HandTracking";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Hand } from "./Hand";
-import {HandPose} from "./HandPose";
+import { HandPose } from "./HandPose";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 let scene: THREE.Scene;
 let origin: THREE.Object3D;
 let leftHand: Hand;
 let rightHand: Hand;
+let theatre: THREE.Group;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
+const loader: GLTFLoader = new GLTFLoader();
 
 let startPlaybackTime = -1;
 
@@ -19,9 +22,10 @@ const joints = 21;
 setup();
 
 function setup() {
+    const canvas = document.getElementById("sampleScene") as HTMLCanvasElement;
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x777777);
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(600, 400);
@@ -45,7 +49,37 @@ function setup() {
     rightHand.position.x = -0.2;
     rightHand.rotateZ(Math.PI);
 
+    const light = new THREE.AmbientLight(0x404040, 30);
+    scene.add(light);
+
+    const spotLightLeftHand = new THREE.SpotLight(0xffffff, 0.5, 1, Math.PI / 5);
+    spotLightLeftHand.position.copy(leftHand.position);
+    spotLightLeftHand.position.z += 0.2;
+    spotLightLeftHand.position.y += 0.2;
+    spotLightLeftHand.target = leftHand;
+
+    const spotLightRightHand = new THREE.SpotLight(0xffffff, 0.5, 1, Math.PI / 5);
+    spotLightRightHand.position.copy(rightHand.position);
+    spotLightRightHand.position.z += 0.2;
+    spotLightRightHand.position.y += 0.2;
+    spotLightRightHand.target = rightHand;
+
+    // spotLight.add(new THREE.AxesHelper(0.1));
+
+    scene.add(spotLightRightHand);
+    scene.add(spotLightLeftHand);
+
     controls = new OrbitControls(camera, renderer.domElement);
+
+    loader.load( "../3d-models/theatre.glb", function ( gltf: GLTF ) {
+        theatre = gltf.scene;
+        scene.add(theatre);
+
+        theatre.scale.set(3, 2.5, 2.5);
+        theatre.position.set(0.05, -0.05, 0.2);
+    }, undefined, function (error) {
+        console.error(error);
+    });
 }
 
 export function playbackRecording() {
