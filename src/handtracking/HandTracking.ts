@@ -5,11 +5,11 @@ import {
 } from "@mediapipe/tasks-vision";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { HAND_CONNECTIONS } from "@mediapipe/hands";
-import { IHandPose, HandSide } from "./IHandPose";
+import { IHandPose, HandSide } from "../interfaces/IHandPose";
 import { Vector3 } from "three";
 import { HandPoseRecording } from "./HandPoseRecording";
-import { playbackRecording } from "./HandScene";
-import { IPuppetPoseRecordingData } from "./IPuppetPoseRecordingData";
+import { playbackRecording } from "../scenes/HandScene";
+import { IPuppetPoseRecordingData } from "../interfaces/IPuppetPoseRecordingData";
 
 let handLandmarker: HandLandmarker;
 let runningMode = "VIDEO";

@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { HandSide } from "./IHandPose";
-import {IPuppetHandFeatures} from "./IPuppetHandFeatures";
+import { HandSide } from "../interfaces/IHandPose";
+import { IPuppetHandFeatures } from "../interfaces/IPuppetHandFeatures";
+import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 export class HandPuppet extends THREE.Object3D {
     private debugVisualizer: THREE.Object3D;
@@ -16,6 +17,7 @@ export class HandPuppet extends THREE.Object3D {
     private rightEye: THREE.Mesh;
     private rightEyePupils: THREE.Mesh;
     private handCategory: HandSide;
+    private accessory: THREE.Group;
 
     // Debug meshes
     private wristMesh: THREE.Mesh;
@@ -24,7 +26,7 @@ export class HandPuppet extends THREE.Object3D {
     private palmCenterMesh: THREE.Mesh;
     private debugLine: THREE.Line;
 
-    constructor(joints: number, color: THREE.ColorRepresentation, handCategory: HandSide) {
+    constructor(joints: number, color: THREE.ColorRepresentation, handCategory: HandSide, loader: GLTFLoader) {
         super();
 
         this.joints = joints;
@@ -72,13 +74,7 @@ export class HandPuppet extends THREE.Object3D {
         this.fingerBox.add(this.leftEye);
         this.fingerBox.add(this.rightEye);
 
-        if (handCategory === "Left") {
-            this.leftEye.position.set(-0.02, 0.02, -0.03);
-            this.rightEye.position.set(0.02, 0.02, -0.03);
-        } else {
-            this.leftEye.position.set(-0.02, 0.02, 0.03);
-            this.rightEye.position.set(0.02, 0.02, 0.03);
-        }
+        this.setupHandAppearance(handCategory, loader);
 
         {
             this.debugVisualizer = new THREE.Object3D();
@@ -118,6 +114,45 @@ export class HandPuppet extends THREE.Object3D {
 
             this.debugVisualizer.visible = false;
         }
+    }
+
+    private setupHandAppearance(handCategory: HandSide, loader: GLTFLoader) {
+        if (handCategory === "Left") {
+            this.setupLeftHandAppearance(loader);
+        } else {
+            this.setupRightHandAppearance(loader);
+        }
+    }
+
+    private setupRightHandAppearance(loader: GLTFLoader) {
+        this.leftEye.position.set(-0.02, 0.02, 0.03);
+        this.rightEye.position.set(0.02, 0.02, 0.03);
+
+        loader.load( "../3d-models/glasses.glb", (gltf: GLTF) => {
+            this.accessory = gltf.scene;
+            this.fingerBox.add(this.accessory);
+            this.accessory.rotateX(-Math.PI / 2);
+            this.accessory.rotateZ(Math.PI);
+            this.accessory.position.set(0, 0.05, 0);
+            this.accessory.scale.set(0.003, 0.005, 0.005);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+    }
+
+    private setupLeftHandAppearance(loader: GLTFLoader) {
+        this.leftEye.position.set(-0.02, 0.02, -0.03);
+        this.rightEye.position.set(0.02, 0.02, -0.03);
+
+        loader.load( "../3d-models/top_hat.glb", (gltf: GLTF) => {
+            this.accessory = gltf.scene;
+            this.fingerBox.add(this.accessory);
+            this.accessory.rotateX(-Math.PI / 2 - 0.7);
+            this.accessory.position.set(0, -0.02, -0.025);
+            this.accessory.scale.set(0.007, 0.007, 0.007);
+        }, undefined, function (error) {
+            console.error(error);
+        });
     }
 
     public update(handFeatures: IPuppetHandFeatures) {

@@ -1,4 +1,4 @@
-import "./HandTracking";
-import "./HandScene"
+import "./handtracking/HandTracking";
+import "./scenes/HandScene"
 // import "./RotationDebugScene"
 // import "./TheatreScene";

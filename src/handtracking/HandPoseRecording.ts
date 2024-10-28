@@ -1,7 +1,7 @@
-import { IHandPose } from "./IHandPose";
-import { IPuppetPoseRecordingData } from "./IPuppetPoseRecordingData";
-import { IPuppetPose } from "./IPuppetPose";
-import { calculateCenter } from "./helpers/VectorHelper";
+import { IHandPose } from "../interfaces/IHandPose";
+import { IPuppetPoseRecordingData } from "../interfaces/IPuppetPoseRecordingData";
+import { IPuppetPose } from "../interfaces/IPuppetPose";
+import { calculateCenter } from "../helpers/VectorHelper";
 import * as THREE from 'three';
 
 export class HandPoseRecording {

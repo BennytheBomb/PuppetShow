@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { handPoseRecording } from "./HandTracking";
+import { handPoseRecording } from "../handtracking/HandTracking";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { HandPuppet } from "./HandPuppet";
+import { HandPuppet } from "../nodes/HandPuppet";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { IPuppetPose } from "./IPuppetPose";
-import { IPuppetHandFeatures } from "./IPuppetHandFeatures";
+import { IPuppetPose } from "../interfaces/IPuppetPose";
+import { IPuppetHandFeatures } from "../interfaces/IPuppetHandFeatures";
 
 let scene: THREE.Scene;
 let origin: THREE.Object3D;
@@ -37,8 +37,8 @@ function setup() {
     scene.add(origin);
     origin.rotateY(Math.PI);
 
-    leftHand = new HandPuppet(joints, 0x00ff00, "Left");
-    rightHand = new HandPuppet(joints, 0xff0000, "Right");
+    leftHand = new HandPuppet(joints, 0x00ff00, "Left", loader);
+    rightHand = new HandPuppet(joints, 0xff0000, "Right", loader);
 
     origin.add(leftHand);
     origin.add(rightHand);
@@ -73,7 +73,7 @@ function setup() {
 
     controls = new OrbitControls(camera, renderer.domElement);
 
-    loader.load( "../3d-models/theatre.glb", function ( gltf: GLTF ) {
+    loader.load( "../3d-models/theatre.glb", (gltf: GLTF) => {
         theatre = gltf.scene;
         scene.add(theatre);
 
