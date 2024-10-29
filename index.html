@@ -7,38 +7,41 @@
     <title>Hand Puppet Theatre</title>
   </head>
   <body>
-    <script type="module" src="/src/Main.ts"></script>
+    <div>
+      <script type="module" src="/src/Main.ts"></script>
 
-    <button id="recordButton">
-      Record
-    </button>
+      <button id="recordButton">
+        Record
+      </button>
 
-    <button id="playbackButton">
-      Playback
-    </button>
+      <button id="playbackButton">
+        Playback
+      </button>
 
-    <button id="downloadButton">
-      Download
-    </button>
+      <button id="downloadButton">
+        Download
+      </button>
 
-    <input type="file" id="jsonFileInput" accept=".json">
+      <input type="file" id="fileInput" accept=".json, .wav">
 
-    <button id="uploadButton">
-      Upload
-    </button>
+      <button id="uploadButton">
+        Upload
+      </button>
 
-    <span id="uploadStatus"></span>
+      <span id="uploadStatus"></span>
 
-    <div style="position: relative;">
-      <video id="webcam" style="position: absolute; z-index: -1" autoplay playsinline></video>
-      <canvas class="output_canvas" id="output_canvas"></canvas>
-      <canvas id="sampleScene"></canvas>
+      <div style="position: relative;">
+        <video id="webcam" style="position: absolute; z-index: -1" autoplay playsinline></video>
+        <canvas class="output_canvas" id="output_canvas"></canvas>
+        <canvas id="scene" width="600" height="400"></canvas>
+      </div>
     </div>
-
-    <p>
-      Punch & Judy Puppet Stage by Don Carson <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a>
-      Glasses by jeremy [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/9i5mmOwt7cu)
-      Top hat by jeremy [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/e5kV1Y_cZJt)
-    </p>
   </body>
+  <footer>
+    <p>
+      Punch & Judy Puppet Stage by Don Carson <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a><br>
+      Glasses by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/9i5mmOwt7cu">Poly Pizza</a><br>
+      Top hat by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/e5kV1Y_cZJt">Poly Pizza</a>
+    </p>
+  </footer>
 </html>
