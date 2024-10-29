@@ -10,10 +10,21 @@ const input = document.getElementById("jsonFileInput") as HTMLInputElement;
 const uploadStatus = document.getElementById("uploadStatus") as HTMLSpanElement;
 const video = document.getElementById("webcam") as HTMLVideoElement;
 const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
+const threeCanvas = document.getElementById("scene") as HTMLCanvasElement;
 
-const handExperience = new HandExperience(video, canvasElement, canvasCtx);
+const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas);
 handExperience.onDataLoaded = () => {
     uploadStatus.innerHTML = "Sample data loaded from server!";
+};
+handExperience.onNewVideoRecording = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'threejs-recording.webm';
+    downloadLink.click();
+
+    URL.revokeObjectURL(url);
 };
 
 recordButton.addEventListener("click", () => {

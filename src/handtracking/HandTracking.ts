@@ -7,10 +7,10 @@ import { Vector3 } from "three";
 export class HandTracking {
     private static readonly RUNNING_MODE = "VIDEO";
 
-    private _handLandmarker: HandLandmarker;
+    private _handLandmarker!: HandLandmarker;
     private _webcamRunning: Boolean = false;
     private _lastVideoTime = -1;
-    private _results: HandLandmarkerResult;
+    private _results!: HandLandmarkerResult;
     private _video: HTMLVideoElement;
     private _canvasCtx: CanvasRenderingContext2D;
     private _canvasElement: HTMLCanvasElement;
@@ -72,7 +72,7 @@ export class HandTracking {
     private drawResultsOnWebcam() {
         this._canvasCtx.save();
         this._canvasCtx.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
-        if (this._results.landmarks) {
+        if (this._results?.landmarks) {
             for (const landmarks of this._results.landmarks) {
                 drawConnectors(this._canvasCtx, landmarks, HAND_CONNECTIONS, {
                     color: "#00FF00",
