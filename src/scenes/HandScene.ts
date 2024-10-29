@@ -9,6 +9,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export class HandScene {
     private static readonly JOINTS = 21;
 
+    private _onPlaybackFinished!: () => void;
+
     private _scene: THREE.Scene;
     private _origin: THREE.Object3D;
     private _leftHand: HandPuppet;
@@ -24,7 +26,6 @@ export class HandScene {
     private _leftHandPoseIndex: number;
     private _rightHandPoseIndex: number;
     private _lerpPositions: boolean;
-    private _onPlaybackFinished!: () => void;
 
     public set onPlaybackFinished(callback: () => void) {
         this._onPlaybackFinished = callback;
