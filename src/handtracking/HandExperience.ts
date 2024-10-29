@@ -8,6 +8,7 @@ import { IHandPose } from "../interfaces/IHandPose";
 export class HandExperience {
     private _onDataLoaded!: () => void;
     private _onNewVideoRecording!: (blob: Blob) => void;
+    private _onNewAudioRecording!: (blob: Blob) => void;
 
     private _handPoseRecording: HandPoseRecording = new HandPoseRecording();
     private _audioBlob: Blob;
@@ -27,6 +28,10 @@ export class HandExperience {
         this._onNewVideoRecording = value;
     }
 
+    public set onNewAudioRecording(value: (blob: Blob) => void) {
+        this._onNewAudioRecording = value;
+    }
+
     public get recording(): Boolean {
         return this._recording;
     }
@@ -43,8 +48,32 @@ export class HandExperience {
 
         this._handScene = new HandScene(threeCanvas);
 
-        const stream = threeCanvas.captureStream(30);
-        this._mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        this.onPlaybackEnd = this.onPlaybackEnd.bind(this);
+        this._handScene.onPlaybackFinished = this.onPlaybackEnd;
+
+        this.init(threeCanvas);
+    }
+
+    private async init(canvas: HTMLCanvasElement) {
+        await this.loadData();
+        await this.setupMediaRecorder(canvas);
+    }
+
+    private async setupMediaRecorder(canvas: HTMLCanvasElement) {
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this._audioRecorder = new MediaRecorder(audioStream);
+
+        this._audioRecorder.ondataavailable = (event) => {
+            this._audioChunks.push(event.data);
+        };
+
+        this._audioRecorder.onstop = () => {
+            this._audioBlob = new Blob(this._audioChunks, { type: 'audio/wav' });
+            this._onNewAudioRecording(this._audioBlob);
+        };
+
+        const videoStream = canvas.captureStream(30);
+        this._mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
 
         this._mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
@@ -56,15 +85,11 @@ export class HandExperience {
             const blob = new Blob(this._chunks, { type: 'video/webm' });
             this._onNewVideoRecording(blob);
         };
-
-        this.onPlaybackEnd = this.onPlaybackEnd.bind(this);
-        this._handScene.onPlaybackFinished = this.onPlaybackEnd;
-
-        this.loadData();
     }
 
     private onPlaybackStart() {
         this._chunks = [];
+
         this._mediaRecorder.start();
     }
 
@@ -95,13 +120,6 @@ export class HandExperience {
     public async startRecording() {
         this._recording = true;
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        this._audioRecorder = new MediaRecorder(stream);
-
-        this._audioRecorder.ondataavailable = (event) => {
-            this._audioChunks.push(event.data);
-        };
-
         this._audioRecorder.start();
         this._handPoseRecording.startRecording();
     }
@@ -113,9 +131,6 @@ export class HandExperience {
 
         if (this._audioRecorder) {
             this._audioRecorder.stop();
-            this._audioRecorder.onstop = () => {
-                this._audioBlob = new Blob(this._audioChunks, { type: 'audio/wav' });
-            };
         }
     }
 

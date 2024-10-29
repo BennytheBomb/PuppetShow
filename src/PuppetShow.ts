@@ -17,14 +17,7 @@ handExperience.onDataLoaded = () => {
     uploadStatus.innerHTML = "Sample data loaded from server!";
 };
 handExperience.onNewVideoRecording = (blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = 'threejs-recording.webm';
-    downloadLink.click();
-
-    URL.revokeObjectURL(url);
+    // downloadFile(blob, "video.webm");
 };
 
 recordButton.addEventListener("click", () => {
