@@ -19,6 +19,7 @@ export class HandExperience {
     private _handScene: HandScene;
     private _chunks: Blob[] = [];
     private _mediaRecorder!: MediaRecorder;
+    private player: Tone.Player;
 
     public set onDataLoaded(value: () => void) {
         this._onDataLoaded = value;
@@ -47,6 +48,10 @@ export class HandExperience {
         this.onPlaybackEnd = this.onPlaybackEnd.bind(this);
         this._handScene.onPlaybackFinished = this.onPlaybackEnd;
 
+        // TODO: make pitch shift field and adjustable during runtime
+        const pitchShift = new Tone.PitchShift(4).toDestination();
+        this.player = new Tone.Player().connect(pitchShift);
+
         this.init(threeCanvas);
     }
 
@@ -69,6 +74,7 @@ export class HandExperience {
         };
 
         const videoStream = canvas.captureStream(30);
+
         this._mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
 
         this._mediaRecorder.ondataavailable = (event) => {
@@ -83,10 +89,13 @@ export class HandExperience {
         };
     }
 
-    private onPlaybackStart() {
+    private onPlaybackStart(recordVideo: boolean) {
+        this.player.start();
+        this._handScene.playbackRecording(this._handPoseRecording);
+
         this._chunks = [];
 
-        this._mediaRecorder.start();
+        if (recordVideo) this._mediaRecorder.start();
     }
 
     private onPlaybackEnd() {
@@ -111,10 +120,13 @@ export class HandExperience {
 
     public loadAudioFile(blob: Blob) {
         this._audioBlob = blob;
+        this._onNewAudioRecording(this._audioBlob);
     }
 
     public async startRecording() {
         this._recording = true;
+
+        this._handTracking.recording = true;
 
         this._audioRecorder.start();
         this._handPoseRecording.startRecording();
@@ -123,6 +135,8 @@ export class HandExperience {
     public stopRecording() {
         this._recording = false;
 
+        this._handTracking.recording = false;
+
         this._handPoseRecording.stopRecording(performance.now());
 
         if (this._audioRecorder) {
@@ -130,16 +144,13 @@ export class HandExperience {
         }
     }
 
-    public playRecording() {
-        const pitchShift = new Tone.PitchShift(4).toDestination();
-        const audioUrl = URL.createObjectURL(this._audioBlob);
-        const player = new Tone.Player(audioUrl).connect(pitchShift);
+    public async playRecording(recordVideo: boolean) {
+        this.player.stop();
+        this._mediaRecorder.stop();
 
-        Tone.loaded().then(() => {
-            player.start();
-            this._handScene.playbackRecording(this._handPoseRecording);
-            this.onPlaybackStart();
-        });
+        const audioUrl = URL.createObjectURL(this._audioBlob);
+        await this.player.load(audioUrl);
+        this.onPlaybackStart(recordVideo);
     }
 
     private onHandPosesDetected(handPoses: IHandPose[]) {

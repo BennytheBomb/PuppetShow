@@ -7,35 +7,51 @@
     <title>Hand Puppet Theatre</title>
   </head>
   <body>
-    <div>
-      <script type="module" src="/src/Main.ts"></script>
+    <script src="src/Main.ts" type="module"></script>
+    <div class="main-container">
+      <div class="container">
+        <div class="canvas-video-wrapper">
+          <canvas id="output_canvas" width="700" height="500"></canvas>
+          <video id="webcam" autoplay playsinline></video>
+        </div>
+        <div class="button-row">
+          <button id="recordButton">
+            Record
+          </button>
+          <input type="file" id="fileInput" accept=".json, .wav">
+          <button id="uploadButton">
+            Upload
+          </button>
+          <span id="uploadStatus"></span>
+          <button id="downloadButton">
+            Download Data Files
+          </button>
+        </div>
+      </div>
 
-      <button id="recordButton">
-        Record
-      </button>
-
-      <button id="playbackButton">
-        Playback
-      </button>
-
-      <button id="downloadButton">
-        Download
-      </button>
-
-      <input type="file" id="fileInput" accept=".json, .wav">
-
-      <button id="uploadButton">
-        Upload
-      </button>
-
-      <span id="uploadStatus"></span>
-
-      <div style="position: relative;">
-        <video id="webcam" style="position: absolute; z-index: -1" autoplay playsinline></video>
-        <canvas class="output_canvas" id="output_canvas"></canvas>
-        <canvas id="scene" width="600" height="400"></canvas>
+      <div class="container">
+        <canvas id="scene" width="700" height="500"></canvas>
+        <div class="button-row">
+          <button id="playbackButton">
+            Playback
+          </button>
+          <div>
+            <input type="checkbox" id="recordCheckbox" />
+            <label for="recordCheckbox">Record Video</label>
+          </div>
+          <button id="downloadVideoButton" disabled>
+            Download Video
+          </button>
+        </div>
       </div>
     </div>
+
+<!--      <div style="position: relative;">-->
+<!--        <video id="webcam" style="position: absolute; z-index: -1" autoplay playsinline></video>-->
+<!--        <canvas class="output_canvas" id="output_canvas"></canvas>-->
+<!--        <canvas id="scene" width="600" height="400"></canvas>-->
+<!--      </div>-->
+<!--    </div>-->
   </body>
   <footer>
     <p>

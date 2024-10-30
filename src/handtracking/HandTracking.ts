@@ -17,6 +17,11 @@ export class HandTracking {
     private _webcamRunning: Boolean = false;
     private _lastVideoTime = -1;
     private _results!: HandLandmarkerResult;
+    private _recording: boolean = false;
+
+    public set recording(value: boolean) {
+        this._recording = value;
+    }
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D) {
         this._video = video;
@@ -83,6 +88,19 @@ export class HandTracking {
                 drawLandmarks(this._canvasCtx, landmarks, {color: "#FF0000", lineWidth: 0.1});
             }
         }
+
+        if (this._recording) {
+            this._canvasCtx.fillStyle = "red";
+            this._canvasCtx.beginPath();
+            this._canvasCtx.arc(30, 30, 10, 0, Math.PI * 2, true);
+            this._canvasCtx.fill();
+
+            this._canvasCtx.fillStyle = "red";
+            this._canvasCtx.font = "20px Arial";
+            this._canvasCtx.fillText("REC", 50, 35);
+        }
+
+
         this._canvasCtx.restore();
     }
 

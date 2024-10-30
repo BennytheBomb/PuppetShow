@@ -5,25 +5,41 @@ const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElem
 const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
 const playbackButton = document.getElementById("playbackButton") as HTMLButtonElement;
 const downloadButton = document.getElementById("downloadButton") as HTMLButtonElement;
+const downloadVideoButton = document.getElementById("downloadVideoButton") as HTMLButtonElement;
 const uploadButton = document.getElementById("uploadButton") as HTMLButtonElement;
 const input = document.getElementById("jsonFileInput") as HTMLInputElement;
 const uploadStatus = document.getElementById("uploadStatus") as HTMLSpanElement;
 const video = document.getElementById("webcam") as HTMLVideoElement;
-const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 const threeCanvas = document.getElementById("scene") as HTMLCanvasElement;
+const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
+const recordCheckbox = document.getElementById("recordCheckbox") as HTMLInputElement;
 
 let audioBlob: Blob;
+let videoBlob: Blob;
+let recordVideo = false;
 
 const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas);
 handExperience.onDataLoaded = () => {
     uploadStatus.innerHTML = "Sample data loaded from server!";
 };
 handExperience.onNewVideoRecording = (blob: Blob) => {
-    // downloadFile(blob, "video.webm");
+    videoBlob = blob;
+    downloadVideoButton.disabled = false;
+    console.log("got the video recording");
 };
 handExperience.onNewAudioRecording = (blob: Blob) => {
     audioBlob = blob;
+    console.log("got the audio recording");
 };
+
+downloadVideoButton.addEventListener("click", () => {
+    if (videoBlob) {
+        downloadFile(videoBlob, "video.webm");
+    }
+});
+recordCheckbox.addEventListener("change", () => {
+    recordVideo = recordCheckbox.checked;
+});
 
 recordButton.addEventListener("click", () => {
     if (!handExperience.recording) {
@@ -37,7 +53,7 @@ recordButton.addEventListener("click", () => {
 
 playbackButton.addEventListener("click", () => {
     if (handExperience.hasRecording && !handExperience.recording) {
-        handExperience.playRecording();
+        handExperience.playRecording(recordVideo);
     }
 });
 
