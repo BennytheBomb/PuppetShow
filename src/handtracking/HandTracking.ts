@@ -7,14 +7,16 @@ import { Vector3 } from "three";
 export class HandTracking {
     private static readonly RUNNING_MODE = "VIDEO";
 
+    private _handPosesDetectedCallback!: (handPoses: IHandPose[]) => void;
+
+    private readonly _video: HTMLVideoElement;
+    private readonly _canvasCtx: CanvasRenderingContext2D;
+
+    private _canvasElement: HTMLCanvasElement;
     private _handLandmarker!: HandLandmarker;
     private _webcamRunning: Boolean = false;
     private _lastVideoTime = -1;
     private _results!: HandLandmarkerResult;
-    private _video: HTMLVideoElement;
-    private _canvasCtx: CanvasRenderingContext2D;
-    private _canvasElement: HTMLCanvasElement;
-    private _handPosesDetectedCallback!: (handPoses: IHandPose[]) => void;
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D) {
         this._video = video;

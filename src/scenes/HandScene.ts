@@ -11,21 +11,22 @@ export class HandScene {
 
     private _onPlaybackFinished!: () => void;
 
-    private _scene: THREE.Scene;
-    private _origin: THREE.Object3D;
-    private _leftHand: HandPuppet;
-    private _rightHand: HandPuppet;
+    private readonly _scene: THREE.Scene;
+    private readonly _origin: THREE.Object3D;
+    private readonly _leftHand: HandPuppet;
+    private readonly _rightHand: HandPuppet;
+    private readonly _camera: THREE.PerspectiveCamera;
+    private readonly _lerpPositions: boolean;
+
     private _theatre!: THREE.Group;
-    private _camera: THREE.PerspectiveCamera;
+    private _handPoseRecording!: HandPoseRecording;
+    private _leftHandPoseIndex!: number;
+    private _rightHandPoseIndex!: number;
     private _renderer: THREE.WebGLRenderer;
     private _controls: OrbitControls;
     private _isPlaying = false;
     private _loader: GLTFLoader = new GLTFLoader();
     private _startPlaybackTime = -1;
-    private _handPoseRecording: HandPoseRecording;
-    private _leftHandPoseIndex: number;
-    private _rightHandPoseIndex: number;
-    private _lerpPositions: boolean;
 
     public set onPlaybackFinished(callback: () => void) {
         this._onPlaybackFinished = callback;

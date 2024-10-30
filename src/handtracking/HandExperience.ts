@@ -11,14 +11,14 @@ export class HandExperience {
     private _onNewAudioRecording!: (blob: Blob) => void;
 
     private _handPoseRecording: HandPoseRecording = new HandPoseRecording();
-    private _audioBlob: Blob;
-    private _audioRecorder: MediaRecorder;
+    private _audioBlob!: Blob;
+    private _audioRecorder!: MediaRecorder;
     private _audioChunks: BlobPart[] = [];
     private _recording: Boolean = false;
     private _handTracking: HandTracking;
     private _handScene: HandScene;
     private _chunks: Blob[] = [];
-    private _mediaRecorder: MediaRecorder;
+    private _mediaRecorder!: MediaRecorder;
 
     public set onDataLoaded(value: () => void) {
         this._onDataLoaded = value;
@@ -34,10 +34,6 @@ export class HandExperience {
 
     public get recording(): Boolean {
         return this._recording;
-    }
-
-    public get audioBlob(): Blob {
-        return this._audioBlob;
     }
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement) {

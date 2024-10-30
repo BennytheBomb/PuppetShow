@@ -4,27 +4,28 @@ import { IPuppetHandFeatures } from "../interfaces/IPuppetHandFeatures";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export class HandPuppet extends THREE.Object3D {
-    private _palmBox: THREE.Mesh;
-    private _fingerBox: THREE.Mesh;
-    private _thumbBox: THREE.Mesh;
-    private _fingerBoxPivot: THREE.Object3D;
-    private _thumbBoxPivot: THREE.Object3D;
+    private readonly _palmBox: THREE.Mesh;
+    private readonly _fingerBox: THREE.Mesh;
+    private readonly _thumbBox: THREE.Mesh;
+    private readonly _fingerBoxPivot: THREE.Object3D;
+    private readonly _thumbBoxPivot: THREE.Object3D;
+    private readonly _leftEye: THREE.Mesh;
+    private readonly _leftEyePupils: THREE.Mesh;
+    private readonly _rightEye: THREE.Mesh;
+    private readonly _rightEyePupils: THREE.Mesh;
+
+    private _accessory!: THREE.Group;
     private _joints: number;
-    private _leftEye: THREE.Mesh;
-    private _leftEyePupils: THREE.Mesh;
-    private _rightEye: THREE.Mesh;
-    private _rightEyePupils: THREE.Mesh;
     private _handCategory: HandSide;
-    private _accessory: THREE.Group;
 
     // Debug meshes
-    private _debugVisualizer: THREE.Object3D;
+    private readonly _debugVisualizer: THREE.Object3D;
     private _debugMeshes: THREE.Object3D[] = [];
-    private _wristMesh: THREE.Mesh;
-    private _handCenterMesh: THREE.Mesh;
-    private _fingerTopMesh: THREE.Mesh;
-    private _palmCenterMesh: THREE.Mesh;
-    private _debugLine: THREE.Line;
+    private readonly _wristMesh: THREE.Mesh;
+    private readonly _handCenterMesh: THREE.Mesh;
+    private readonly _fingerTopMesh: THREE.Mesh;
+    private readonly _palmCenterMesh: THREE.Mesh;
+    private readonly _debugLine: THREE.Line;
 
     constructor(joints: number, color: THREE.ColorRepresentation, handCategory: HandSide, loader: GLTFLoader) {
         super();

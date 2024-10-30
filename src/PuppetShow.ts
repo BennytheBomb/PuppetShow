@@ -12,12 +12,17 @@ const video = document.getElementById("webcam") as HTMLVideoElement;
 const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 const threeCanvas = document.getElementById("scene") as HTMLCanvasElement;
 
+let audioBlob: Blob;
+
 const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas);
 handExperience.onDataLoaded = () => {
     uploadStatus.innerHTML = "Sample data loaded from server!";
 };
 handExperience.onNewVideoRecording = (blob: Blob) => {
     // downloadFile(blob, "video.webm");
+};
+handExperience.onNewAudioRecording = (blob: Blob) => {
+    audioBlob = blob;
 };
 
 recordButton.addEventListener("click", () => {
@@ -40,7 +45,7 @@ downloadButton.addEventListener("click", () => {
     if (handExperience.hasRecording) {
         const downloadableRecording = handExperience.downloadableHandPoseRecordingData;
         downloadJSON(downloadableRecording);
-        downloadFile(handExperience.audioBlob, "audio.wav");
+        if (audioBlob) downloadFile(audioBlob, "audio.wav");
     }
 });
 
