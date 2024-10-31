@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
@@ -27,7 +27,7 @@ function setup() {
 
     camera.position.set(0, 0.1, 0.2);
 
-    loader.load( "../3d-models/theatre.glb", function ( gltf: GLTF ) {
+    loader.load("../3d-models/theatre.glb", function (gltf: GLTF) {
         scene.add(gltf.scene);
     }, undefined, function (error) {
         console.error(error);

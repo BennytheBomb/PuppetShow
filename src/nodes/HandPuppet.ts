@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { HandSide } from "../interfaces/IHandPose";
-import { IPuppetHandFeatures } from "../interfaces/IPuppetHandFeatures";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import {HandSide} from "../interfaces/IHandPose";
+import {IPuppetHandFeatures} from "../interfaces/IPuppetHandFeatures";
+import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 export class HandPuppet extends THREE.Object3D {
     private readonly _palmBox: THREE.Mesh;
@@ -115,45 +115,6 @@ export class HandPuppet extends THREE.Object3D {
         }
     }
 
-    private setupHandAppearance(handCategory: HandSide, loader: GLTFLoader) {
-        if (handCategory === "Left") {
-            this.setupLeftHandAppearance(loader);
-        } else {
-            this.setupRightHandAppearance(loader);
-        }
-    }
-
-    private setupRightHandAppearance(loader: GLTFLoader) {
-        this._leftEye.position.set(-0.02, 0.02, 0.03);
-        this._rightEye.position.set(0.02, 0.02, 0.03);
-
-        loader.load( "../3d-models/glasses.glb", (gltf: GLTF) => {
-            this._accessory = gltf.scene;
-            this._fingerBox.add(this._accessory);
-            this._accessory.rotateX(-Math.PI / 2);
-            this._accessory.rotateZ(Math.PI);
-            this._accessory.position.set(0, 0.05, 0);
-            this._accessory.scale.set(0.003, 0.005, 0.005);
-        }, undefined, function (error) {
-            console.error(error);
-        });
-    }
-
-    private setupLeftHandAppearance(loader: GLTFLoader) {
-        this._leftEye.position.set(-0.02, 0.02, -0.03);
-        this._rightEye.position.set(0.02, 0.02, -0.03);
-
-        loader.load( "../3d-models/top_hat.glb", (gltf: GLTF) => {
-            this._accessory = gltf.scene;
-            this._fingerBox.add(this._accessory);
-            this._accessory.rotateX(-Math.PI / 2 - 0.7);
-            this._accessory.position.set(0, -0.02, -0.025);
-            this._accessory.scale.set(0.007, 0.007, 0.007);
-        }, undefined, function (error) {
-            console.error(error);
-        });
-    }
-
     public update(handFeatures: IPuppetHandFeatures) {
         const palmCenter = handFeatures.palmCenter;
         const handCenter = handFeatures.handCenter;
@@ -214,6 +175,45 @@ export class HandPuppet extends THREE.Object3D {
         // for (let i = 0; i < this.joints; i++) {
         //     this.debugMeshes[i].position.copy(positions[i]);
         // }
+    }
+
+    private setupHandAppearance(handCategory: HandSide, loader: GLTFLoader) {
+        if (handCategory === "Left") {
+            this.setupLeftHandAppearance(loader);
+        } else {
+            this.setupRightHandAppearance(loader);
+        }
+    }
+
+    private setupRightHandAppearance(loader: GLTFLoader) {
+        this._leftEye.position.set(-0.02, 0.02, 0.03);
+        this._rightEye.position.set(0.02, 0.02, 0.03);
+
+        loader.load("../3d-models/glasses.glb", (gltf: GLTF) => {
+            this._accessory = gltf.scene;
+            this._fingerBox.add(this._accessory);
+            this._accessory.rotateX(-Math.PI / 2);
+            this._accessory.rotateZ(Math.PI);
+            this._accessory.position.set(0, 0.05, 0);
+            this._accessory.scale.set(0.003, 0.005, 0.005);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+    }
+
+    private setupLeftHandAppearance(loader: GLTFLoader) {
+        this._leftEye.position.set(-0.02, 0.02, -0.03);
+        this._rightEye.position.set(0.02, 0.02, -0.03);
+
+        loader.load("../3d-models/top_hat.glb", (gltf: GLTF) => {
+            this._accessory = gltf.scene;
+            this._fingerBox.add(this._accessory);
+            this._accessory.rotateX(-Math.PI / 2 - 0.7);
+            this._accessory.position.set(0, -0.02, -0.025);
+            this._accessory.scale.set(0.007, 0.007, 0.007);
+        }, undefined, function (error) {
+            console.error(error);
+        });
     }
 
     private updateDebugLine(start: THREE.Vector3, end: THREE.Vector3) {

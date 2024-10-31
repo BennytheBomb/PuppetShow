@@ -1,25 +1,25 @@
-import { IHandPose } from "../interfaces/IHandPose";
-import { IPuppetPoseRecordingData } from "../interfaces/IPuppetPoseRecordingData";
-import { IPuppetPose } from "../interfaces/IPuppetPose";
-import { calculateCenter } from "../helpers/VectorHelper";
+import {IHandPose} from "../interfaces/IHandPose";
+import {IPuppetPoseRecordingData} from "../interfaces/IPuppetPoseRecordingData";
+import {IPuppetPose} from "../interfaces/IPuppetPose";
+import {calculateCenter} from "../helpers/VectorHelper";
 import * as THREE from 'three';
 
 export class HandPoseRecording {
     private static readonly CONFIDENCE_SCORE_THRESHOLD = 0.7;
     private static readonly MOTION_SCORE_MIN_THRESHOLD = 0.05; // in meters
     private static readonly RECORDING_TIME_INTERVAL = 16; // around 60 fps
-
-    private _leftHandPoses: IPuppetPose[] = [];
-    private _rightHandPoses: IPuppetPose[] = [];
     private _startTime: number;
     private _endTime: number;
-
     private _previousLeftHandPose: IHandPose = null;
     private _previousRightHandPose: IHandPose = null;
+
+    private _leftHandPoses: IPuppetPose[] = [];
 
     public get leftHandPoses(): IPuppetPose[] {
         return this._leftHandPoses;
     }
+
+    private _rightHandPoses: IPuppetPose[] = [];
 
     public get rightHandPoses(): IPuppetPose[] {
         return this._rightHandPoses;

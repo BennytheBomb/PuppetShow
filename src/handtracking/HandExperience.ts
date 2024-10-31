@@ -1,20 +1,15 @@
-import { IPuppetPoseRecordingData } from "../interfaces/IPuppetPoseRecordingData";
-import { HandPoseRecording } from "./HandPoseRecording";
+import {IPuppetPoseRecordingData} from "../interfaces/IPuppetPoseRecordingData";
+import {HandPoseRecording} from "./HandPoseRecording";
 import * as Tone from "tone";
-import { HandScene } from "../scenes/HandScene";
-import { HandTracking } from "./HandTracking";
-import { IHandPose } from "../interfaces/IHandPose";
+import {HandScene} from "../scenes/HandScene";
+import {HandTracking} from "./HandTracking";
+import {IHandPose} from "../interfaces/IHandPose";
 
 export class HandExperience {
-    private _onDataLoaded!: () => void;
-    private _onNewVideoRecording!: (blob: Blob) => void;
-    private _onNewAudioRecording!: (blob: Blob) => void;
-
     private _handPoseRecording: HandPoseRecording = new HandPoseRecording();
     private _audioBlob!: Blob;
     private _audioRecorder!: MediaRecorder;
     private _audioChunks: BlobPart[] = [];
-    private _recording: Boolean = false;
     private _handTracking: HandTracking;
     private _handScene: HandScene;
     private _chunks: Blob[] = [];
@@ -22,22 +17,6 @@ export class HandExperience {
     private _player: Tone.Player;
     private _threeCanvas: HTMLCanvasElement;
     private _pitchShift: Tone.PitchShift;
-
-    public set onDataLoaded(value: () => void) {
-        this._onDataLoaded = value;
-    }
-
-    public set onNewVideoRecording(value: (blob: Blob) => void) {
-        this._onNewVideoRecording = value;
-    }
-
-    public set onNewAudioRecording(value: (blob: Blob) => void) {
-        this._onNewAudioRecording = value;
-    }
-
-    public get recording(): Boolean {
-        return this._recording;
-    }
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement) {
         this._handTracking = new HandTracking(video, canvasElement, canvasCtx);
@@ -57,6 +36,77 @@ export class HandExperience {
         this._player = new Tone.Player();
 
         this.init();
+    }
+
+    private _onDataLoaded!: () => void;
+
+    public set onDataLoaded(value: () => void) {
+        this._onDataLoaded = value;
+    }
+
+    private _onNewVideoRecording!: (blob: Blob) => void;
+
+    public set onNewVideoRecording(value: (blob: Blob) => void) {
+        this._onNewVideoRecording = value;
+    }
+
+    private _onNewAudioRecording!: (blob: Blob) => void;
+
+    public set onNewAudioRecording(value: (blob: Blob) => void) {
+        this._onNewAudioRecording = value;
+    }
+
+    private _recording: Boolean = false;
+
+    public get recording(): Boolean {
+        return this._recording;
+    }
+
+    public get hasRecording(): boolean {
+        return this._handPoseRecording.hasRecording;
+    }
+
+    public get downloadableHandPoseRecordingData() {
+        return this._handPoseRecording.getDownloadableHandPoseRecordingData();
+    }
+
+    public loadHandPoseRecordingData(data: IPuppetPoseRecordingData) {
+        this._handPoseRecording.loadHandPoseRecordingData(data);
+    }
+
+    public loadAudioFile(blob: Blob) {
+        this._audioBlob = blob;
+        this._onNewAudioRecording(this._audioBlob);
+    }
+
+    public async startRecording() {
+        this._recording = true;
+
+        this._handTracking.recording = true;
+
+        this._audioRecorder.start();
+        this._handPoseRecording.startRecording();
+    }
+
+    public stopRecording() {
+        this._recording = false;
+
+        this._handTracking.recording = false;
+
+        this._handPoseRecording.stopRecording(performance.now());
+
+        if (this._audioRecorder) {
+            this._audioRecorder.stop();
+        }
+    }
+
+    public async playRecording(recordVideo: boolean) {
+        this._player.stop();
+        // this._mediaRecorder.stop();
+
+        const audioUrl = URL.createObjectURL(this._audioBlob);
+        await this._player.load(audioUrl);
+        this.onPlaybackStart(recordVideo);
     }
 
     private async init() {
@@ -115,7 +165,7 @@ export class HandExperience {
     }
 
     private onPlaybackEnd() {
-        this._mediaRecorder.stop();
+        this._mediaRecorder?.stop();
     }
 
     private async loadData() {
@@ -128,45 +178,6 @@ export class HandExperience {
         if (this._onDataLoaded) {
             this._onDataLoaded();
         }
-    }
-
-    public loadHandPoseRecordingData(data: IPuppetPoseRecordingData) {
-        this._handPoseRecording.loadHandPoseRecordingData(data);
-    }
-
-    public loadAudioFile(blob: Blob) {
-        this._audioBlob = blob;
-        this._onNewAudioRecording(this._audioBlob);
-    }
-
-    public async startRecording() {
-        this._recording = true;
-
-        this._handTracking.recording = true;
-
-        this._audioRecorder.start();
-        this._handPoseRecording.startRecording();
-    }
-
-    public stopRecording() {
-        this._recording = false;
-
-        this._handTracking.recording = false;
-
-        this._handPoseRecording.stopRecording(performance.now());
-
-        if (this._audioRecorder) {
-            this._audioRecorder.stop();
-        }
-    }
-
-    public async playRecording(recordVideo: boolean) {
-        this._player.stop();
-        // this._mediaRecorder.stop();
-
-        const audioUrl = URL.createObjectURL(this._audioBlob);
-        await this._player.load(audioUrl);
-        this.onPlaybackStart(recordVideo);
     }
 
     private onHandPosesDetected(handPoses: IHandPose[]) {
@@ -185,13 +196,5 @@ export class HandExperience {
     private async fetchWavData() {
         const response = await fetch("/recordings/audio.wav");
         return await response.blob();
-    }
-
-    public get hasRecording(): boolean {
-        return this._handPoseRecording.hasRecording;
-    }
-
-    public get downloadableHandPoseRecordingData() {
-        return this._handPoseRecording.getDownloadableHandPoseRecordingData();
     }
 }

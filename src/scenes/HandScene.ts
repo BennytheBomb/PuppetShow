@@ -1,23 +1,19 @@
 import * as THREE from 'three';
-import { HandPuppet } from "../nodes/HandPuppet";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { IPuppetPose } from "../interfaces/IPuppetPose";
-import { IPuppetHandFeatures } from "../interfaces/IPuppetHandFeatures";
-import { HandPoseRecording } from "../handtracking/HandPoseRecording";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import {HandPuppet} from "../nodes/HandPuppet";
+import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {IPuppetPose} from "../interfaces/IPuppetPose";
+import {IPuppetHandFeatures} from "../interfaces/IPuppetHandFeatures";
+import {HandPoseRecording} from "../handtracking/HandPoseRecording";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 export class HandScene {
     private static readonly JOINTS = 21;
-
-    private _onPlaybackFinished!: () => void;
-
     private readonly _scene: THREE.Scene;
     private readonly _origin: THREE.Object3D;
     private readonly _leftHand: HandPuppet;
     private readonly _rightHand: HandPuppet;
     private readonly _camera: THREE.PerspectiveCamera;
     private readonly _lerpPositions: boolean;
-
     private _theatre!: THREE.Group;
     private _handPoseRecording!: HandPoseRecording;
     private _leftHandPoseIndex!: number;
@@ -27,10 +23,6 @@ export class HandScene {
     private _isPlaying = false;
     private _loader: GLTFLoader = new GLTFLoader();
     private _startPlaybackTime = -1;
-
-    public set onPlaybackFinished(callback: () => void) {
-        this._onPlaybackFinished = callback;
-    }
 
     constructor(canvas: HTMLCanvasElement, lerpPositions = false) {
         this._lerpPositions = lerpPositions;
@@ -86,7 +78,7 @@ export class HandScene {
 
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
-        this._loader.load( "../3d-models/theatre.glb", (gltf: GLTF) => {
+        this._loader.load("../3d-models/theatre.glb", (gltf: GLTF) => {
             this._theatre = gltf.scene;
             this._scene.add(this._theatre);
 
@@ -95,6 +87,12 @@ export class HandScene {
         }, undefined, (error) => {
             console.error(error);
         });
+    }
+
+    private _onPlaybackFinished!: () => void;
+
+    public set onPlaybackFinished(callback: () => void) {
+        this._onPlaybackFinished = callback;
     }
 
     public playbackRecording(handPoseRecording: HandPoseRecording) {

@@ -1,5 +1,5 @@
-import { IPuppetPoseRecordingData } from "./interfaces/IPuppetPoseRecordingData";
-import { HandExperience } from "./handtracking/HandExperience";
+import {IPuppetPoseRecordingData} from "./interfaces/IPuppetPoseRecordingData";
+import {HandExperience} from "./handtracking/HandExperience";
 
 const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
 const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
@@ -92,7 +92,7 @@ function handleFileUpload() {
     } else if (file.type === "audio/wav" || file.name.endsWith(".wav")) {
         reader.onload = event => {
             try {
-                const audioBlob = new Blob([event.target?.result as ArrayBuffer], { type: "audio/wav" });
+                const audioBlob = new Blob([event.target?.result as ArrayBuffer], {type: "audio/wav"});
                 handExperience.loadAudioFile(audioBlob);
                 uploadStatus.innerHTML = "WAV upload successful!";
             } catch (e) {
@@ -107,7 +107,7 @@ function handleFileUpload() {
 
 function downloadJSON(data: IPuppetPoseRecordingData, filename = "data.json") {
     const jsonStr = JSON.stringify(data, null, 2);  // Convert JSON object to a string
-    const blob = new Blob([jsonStr], { type: "application/json" });
+    const blob = new Blob([jsonStr], {type: "application/json"});
     downloadFile(blob, filename);
 }
 

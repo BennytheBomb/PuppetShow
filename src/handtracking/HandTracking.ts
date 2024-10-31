@@ -1,27 +1,18 @@
-import { FilesetResolver, HandLandmarker, HandLandmarkerResult } from "@mediapipe/tasks-vision";
-import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
-import { HAND_CONNECTIONS } from "@mediapipe/hands";
-import { HandSide, IHandPose } from "../interfaces/IHandPose";
-import { Vector3 } from "three";
+import {FilesetResolver, HandLandmarker, HandLandmarkerResult} from "@mediapipe/tasks-vision";
+import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
+import {HAND_CONNECTIONS} from "@mediapipe/hands";
+import {HandSide, IHandPose} from "../interfaces/IHandPose";
+import {Vector3} from "three";
 
 export class HandTracking {
     private static readonly RUNNING_MODE = "VIDEO";
-
-    private _handPosesDetectedCallback!: (handPoses: IHandPose[]) => void;
-
     private readonly _video: HTMLVideoElement;
     private readonly _canvasCtx: CanvasRenderingContext2D;
-
     private _canvasElement: HTMLCanvasElement;
     private _handLandmarker!: HandLandmarker;
     private _webcamRunning: Boolean = false;
     private _lastVideoTime = -1;
     private _results!: HandLandmarkerResult;
-    private _recording: boolean = false;
-
-    public set recording(value: boolean) {
-        this._recording = value;
-    }
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D) {
         this._video = video;
@@ -34,6 +25,18 @@ export class HandTracking {
 
         this.predictWebcam = this.predictWebcam.bind(this);
         this.init();
+    }
+
+    private _handPosesDetectedCallback!: (handPoses: IHandPose[]) => void;
+
+    public set handPosesDetectedCallback(value: (handPoses: IHandPose[]) => void) {
+        this._handPosesDetectedCallback = value;
+    }
+
+    private _recording: boolean = false;
+
+    public set recording(value: boolean) {
+        this._recording = value;
     }
 
     private async init() {
@@ -134,11 +137,7 @@ export class HandTracking {
             // World landmarks are normalized
             const positions = handLandmarkerResult.worldLandmarks[index].map(landmark => new Vector3(landmark.x, landmark.y, landmark.z));
 
-            return { score, positions, side, timestamp };
+            return {score, positions, side, timestamp};
         });
-    }
-
-    public set handPosesDetectedCallback(value: (handPoses: IHandPose[]) => void) {
-        this._handPosesDetectedCallback = value;
     }
 }

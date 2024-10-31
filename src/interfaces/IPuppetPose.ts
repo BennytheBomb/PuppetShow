@@ -1,5 +1,5 @@
-import { HandSide } from "./IHandPose";
-import { IPuppetHandFeatures } from "./IPuppetHandFeatures";
+import {HandSide} from "./IHandPose";
+import {IPuppetHandFeatures} from "./IPuppetHandFeatures";
 
 export interface IPuppetPose {
     handFeatures: IPuppetHandFeatures;
