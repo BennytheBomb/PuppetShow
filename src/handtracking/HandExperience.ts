@@ -65,7 +65,7 @@ export class HandExperience {
     }
 
     private async setupAudioRecorder() {
-        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioStream = await navigator.mediaDevices.getUserMedia({audio: true});
         this._audioRecorder = new MediaRecorder(audioStream);
 
         this._audioRecorder.ondataavailable = (event) => {
@@ -73,48 +73,45 @@ export class HandExperience {
         };
 
         this._audioRecorder.onstop = () => {
-            this._audioBlob = new Blob(this._audioChunks, { type: 'audio/wav' });
+            this._audioBlob = new Blob(this._audioChunks, {type: 'audio/wav'});
             this._onNewAudioRecording(this._audioBlob);
         };
     }
 
+    private recordVideo() {
+        this._chunks = [];
+        const videoStream = this._threeCanvas.captureStream(30);
+
+        const audioContext = this._player.context;
+        const mediaStreamDestination = audioContext.createMediaStreamDestination();
+
+        this._player.connect(this._pitchShift);
+        this._pitchShift.connect(mediaStreamDestination);
+
+        const audioStream = mediaStreamDestination.stream;
+        const combinedStream = new MediaStream([...videoStream.getTracks(), ...audioStream.getTracks()]);
+
+        this._mediaRecorder = new MediaRecorder(combinedStream, {mimeType: 'video/webm'});
+
+        this._mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                this._chunks.push(event.data);
+            }
+        };
+
+        this._mediaRecorder.onstop = () => {
+            const blob = new Blob(this._chunks, {type: 'video/webm'});
+            this._onNewVideoRecording(blob);
+        };
+
+        this._mediaRecorder.start();
+    }
+
     private onPlaybackStart(recordVideo: boolean) {
+        if (recordVideo) this.recordVideo();
+
         this._player.start();
         this._handScene.playbackRecording(this._handPoseRecording);
-
-        this._chunks = [];
-
-        if (recordVideo) {
-            const videoStream = this._threeCanvas.captureStream(30);
-
-            const audioContext = this._player.context;
-            const mediaStreamDestination = audioContext.createMediaStreamDestination();
-
-            this._player.connect(this._pitchShift);
-            this._pitchShift.connect(mediaStreamDestination);
-
-            const audioStream = mediaStreamDestination.stream;
-
-            const combinedStream = new MediaStream([...videoStream.getTracks(), ...audioStream.getTracks()]);
-
-            this._mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
-
-            // this._mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
-
-            this._mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    this._chunks.push(event.data);
-                }
-            };
-
-            this._mediaRecorder.onstop = () => {
-                const blob = new Blob(this._chunks, { type: 'video/webm' });
-                this._onNewVideoRecording(blob);
-            };
-        }
-
-
-        if (recordVideo) this._mediaRecorder.start();
     }
 
     private onPlaybackEnd() {
