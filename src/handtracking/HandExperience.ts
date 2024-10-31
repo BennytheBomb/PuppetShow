@@ -70,6 +70,10 @@ export class HandExperience {
         return this._handPoseRecording.getDownloadableHandPoseRecordingData();
     }
 
+    public setAccessoryVisible(visible: boolean) {
+        this._handScene.setAccessoryVisible(visible);
+    }
+
     public loadHandPoseRecordingData(data: IPuppetPoseRecordingData) {
         this._handPoseRecording.loadHandPoseRecordingData(data);
     }

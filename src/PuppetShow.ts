@@ -13,6 +13,7 @@ const video = document.getElementById("webcam") as HTMLVideoElement;
 const threeCanvas = document.getElementById("scene") as HTMLCanvasElement;
 const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 const recordCheckbox = document.getElementById("recordCheckbox") as HTMLInputElement;
+const costumesCheckbox = document.getElementById("costumesCheckbox") as HTMLInputElement;
 
 let audioBlob: Blob;
 let videoBlob: Blob;
@@ -39,6 +40,10 @@ downloadVideoButton.addEventListener("click", () => {
 });
 recordCheckbox.addEventListener("change", () => {
     recordVideo = recordCheckbox.checked;
+});
+
+costumesCheckbox.addEventListener("change", () => {
+    handExperience.setAccessoryVisible(costumesCheckbox.checked);
 });
 
 recordButton.addEventListener("click", () => {

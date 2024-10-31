@@ -115,6 +115,10 @@ export class HandPuppet extends THREE.Object3D {
         }
     }
 
+    public setAccessoryVisible(visible: boolean) {
+        this._accessory.visible = visible;
+    }
+
     public update(handFeatures: IPuppetHandFeatures) {
         const palmCenter = handFeatures.palmCenter;
         const handCenter = handFeatures.handCenter;

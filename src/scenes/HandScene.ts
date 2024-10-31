@@ -91,6 +91,11 @@ export class HandScene {
 
     private _onPlaybackFinished!: () => void;
 
+    public setAccessoryVisible(visible: boolean) {
+        this._leftHand.setAccessoryVisible(visible);
+        this._rightHand.setAccessoryVisible(visible);
+    }
+
     public set onPlaybackFinished(callback: () => void) {
         this._onPlaybackFinished = callback;
     }
