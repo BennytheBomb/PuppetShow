@@ -1,11 +1,9 @@
 import * as THREE from "three";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
-let controls: OrbitControls;
 const loader: GLTFLoader = new GLTFLoader();
 
 setup();

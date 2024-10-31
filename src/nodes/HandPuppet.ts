@@ -15,8 +15,8 @@ export class HandPuppet extends THREE.Object3D {
     private readonly _rightEyePupils: THREE.Mesh;
 
     private _accessory!: THREE.Group;
-    private _joints: number;
-    private _handCategory: HandSide;
+    // private _joints: number;
+    // private _handCategory: HandSide;
 
     // Debug meshes
     private readonly _debugVisualizer: THREE.Object3D;
@@ -30,8 +30,8 @@ export class HandPuppet extends THREE.Object3D {
     constructor(joints: number, color: THREE.ColorRepresentation, handCategory: HandSide, loader: GLTFLoader) {
         super();
 
-        this._joints = joints;
-        this._handCategory = handCategory;
+        // this._joints = joints;
+        // this._handCategory = handCategory;
 
         this._palmBox = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.02), new THREE.MeshBasicMaterial({color: 0x333333}));
         this._fingerBox = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.02), new THREE.MeshBasicMaterial({color: 0x444444}));
@@ -220,17 +220,17 @@ export class HandPuppet extends THREE.Object3D {
         });
     }
 
-    private updateDebugLine(start: THREE.Vector3, end: THREE.Vector3) {
-        const newPositions = new Float32Array(6);
-
-        newPositions[0] = start.x;
-        newPositions[1] = start.y;
-        newPositions[2] = start.z;
-        newPositions[3] = end.x;
-        newPositions[4] = end.y;
-        newPositions[5] = end.z;
-
-        this._debugLine.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
-        this._debugLine.geometry.attributes.position.needsUpdate = true;
-    }
+    // private updateDebugLine(start: THREE.Vector3, end: THREE.Vector3) {
+    //     const newPositions = new Float32Array(6);
+    //
+    //     newPositions[0] = start.x;
+    //     newPositions[1] = start.y;
+    //     newPositions[2] = start.z;
+    //     newPositions[3] = end.x;
+    //     newPositions[4] = end.y;
+    //     newPositions[5] = end.z;
+    //
+    //     this._debugLine.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
+    //     this._debugLine.geometry.attributes.position.needsUpdate = true;
+    // }
 }

@@ -33,7 +33,7 @@ function setup() {
     current.rotateZ(-2.3);
 
     const targetUp = new Vector3(0, 1, 0).applyQuaternion(target.quaternion);
-    const targetRight = new Vector3(1, 0, 0).applyQuaternion(target.quaternion);
+    // const targetRight = new Vector3(1, 0, 0).applyQuaternion(target.quaternion);
     const targetForward = new Vector3(0, 0, 1).applyQuaternion(target.quaternion);
 
     const currentUp = new Vector3(0, 1, 0).applyQuaternion(current.quaternion);

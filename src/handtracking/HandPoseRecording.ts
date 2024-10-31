@@ -8,10 +8,10 @@ export class HandPoseRecording {
     private static readonly CONFIDENCE_SCORE_THRESHOLD = 0.7;
     private static readonly MOTION_SCORE_MIN_THRESHOLD = 0.05; // in meters
     private static readonly RECORDING_TIME_INTERVAL = 16; // around 60 fps
-    private _startTime: number;
-    private _endTime: number;
-    private _previousLeftHandPose: IHandPose = null;
-    private _previousRightHandPose: IHandPose = null;
+    private _startTime!: number;
+    private _endTime!: number;
+    private _previousLeftHandPose: IHandPose | null = null;
+    private _previousRightHandPose: IHandPose | null = null;
 
     private _leftHandPoses: IPuppetPose[] = [];
 
