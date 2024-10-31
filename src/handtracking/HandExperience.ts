@@ -19,7 +19,9 @@ export class HandExperience {
     private _handScene: HandScene;
     private _chunks: Blob[] = [];
     private _mediaRecorder!: MediaRecorder;
-    private player: Tone.Player;
+    private _player: Tone.Player;
+    private _threeCanvas: HTMLCanvasElement;
+    private _pitchShift: Tone.PitchShift;
 
     public set onDataLoaded(value: () => void) {
         this._onDataLoaded = value;
@@ -40,6 +42,8 @@ export class HandExperience {
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement) {
         this._handTracking = new HandTracking(video, canvasElement, canvasCtx);
 
+        this._threeCanvas = threeCanvas;
+
         this.onHandPosesDetected = this.onHandPosesDetected.bind(this);
         this._handTracking.handPosesDetectedCallback = this.onHandPosesDetected;
 
@@ -49,18 +53,18 @@ export class HandExperience {
         this._handScene.onPlaybackFinished = this.onPlaybackEnd;
 
         // TODO: make pitch shift field and adjustable during runtime
-        const pitchShift = new Tone.PitchShift(4).toDestination();
-        this.player = new Tone.Player().connect(pitchShift);
+        this._pitchShift = new Tone.PitchShift(4).toDestination();
+        this._player = new Tone.Player();
 
-        this.init(threeCanvas);
+        this.init();
     }
 
-    private async init(canvas: HTMLCanvasElement) {
+    private async init() {
         await this.loadData();
-        await this.setupMediaRecorder(canvas);
+        await this.setupAudioRecorder();
     }
 
-    private async setupMediaRecorder(canvas: HTMLCanvasElement) {
+    private async setupAudioRecorder() {
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         this._audioRecorder = new MediaRecorder(audioStream);
 
@@ -72,28 +76,43 @@ export class HandExperience {
             this._audioBlob = new Blob(this._audioChunks, { type: 'audio/wav' });
             this._onNewAudioRecording(this._audioBlob);
         };
-
-        const videoStream = canvas.captureStream(30);
-
-        this._mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
-
-        this._mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                this._chunks.push(event.data);
-            }
-        };
-
-        this._mediaRecorder.onstop = () => {
-            const blob = new Blob(this._chunks, { type: 'video/webm' });
-            this._onNewVideoRecording(blob);
-        };
     }
 
     private onPlaybackStart(recordVideo: boolean) {
-        this.player.start();
+        this._player.start();
         this._handScene.playbackRecording(this._handPoseRecording);
 
         this._chunks = [];
+
+        if (recordVideo) {
+            const videoStream = this._threeCanvas.captureStream(30);
+
+            const audioContext = this._player.context;
+            const mediaStreamDestination = audioContext.createMediaStreamDestination();
+
+            this._player.connect(this._pitchShift);
+            this._pitchShift.connect(mediaStreamDestination);
+
+            const audioStream = mediaStreamDestination.stream;
+
+            const combinedStream = new MediaStream([...videoStream.getTracks(), ...audioStream.getTracks()]);
+
+            this._mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+
+            // this._mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm' });
+
+            this._mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    this._chunks.push(event.data);
+                }
+            };
+
+            this._mediaRecorder.onstop = () => {
+                const blob = new Blob(this._chunks, { type: 'video/webm' });
+                this._onNewVideoRecording(blob);
+            };
+        }
+
 
         if (recordVideo) this._mediaRecorder.start();
     }
@@ -145,11 +164,11 @@ export class HandExperience {
     }
 
     public async playRecording(recordVideo: boolean) {
-        this.player.stop();
-        this._mediaRecorder.stop();
+        this._player.stop();
+        // this._mediaRecorder.stop();
 
         const audioUrl = URL.createObjectURL(this._audioBlob);
-        await this.player.load(audioUrl);
+        await this._player.load(audioUrl);
         this.onPlaybackStart(recordVideo);
     }
 
