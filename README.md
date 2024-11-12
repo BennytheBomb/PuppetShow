@@ -1,72 +1,36 @@
-# Three.js Vite Template with TypeScript
+# Puppet Show
 
-Three.js + Vite + TypeScript starter
+This project is a virtual hand puppet show that combines Google’s MediaPipe hand-tracking with Three.js. Users record hand and voice input to create a puppet show with two talking figures. MediaPipe provides 21 hand landmarks, which I simplify into five key points and a directional vector for each puppet. After recording, users can playback the show, toggle on or off costumes, adjust the voices pitch, and navigate around the 3D scene. The recording can then be saved as a video.
 
-- [Demo](https://vite-threejs-ts-template.vercel.app/)
-- [Jump to CLI commands](#cli-commands)
+![hand_puppet.png](hand_puppet.png)
 
-## Copy (clone without git history)
+## Feature #1: Recording hand poses
+MediaPipe’s hand tracking detects a set of 21 hand landmarks, allowing each camera frame to be processed using a combination of computer vision and machine learning. These landmarks are transformed into hand poses that excludes recordings with low confidence, minimal motion and small time frames to reduce data load. Filtered points get transformed into a puppet pose with five main points and a directional vector, that make up the anchor points of the three puppet parts: a palm box and two hinged boxes for the fingers and thumb.
+I’m very pleased with how this feature came out. The recording system is simple and adaptable, with a clear separation between data recording and visual presentation.
+With a clear vision of the final application in my head, the process of transforming MediaPipe’s output into a normalised 3D space for the puppet’s key points went straightforward. To streamline development, I recorded sample data early on, which sped up testing and refinement. Regularly refactoring the code kept it organised and made adjustments easier later on.
+I wouldn’t change anything about my approach. Setting up sample data early and planning for organised, flexible code were crucial for a smooth workflow. Focusing on a small subset of features I wanted to implement was key in implementing my vision.
 
-```shell
-npx degit pachoclo/vite-threejs-ts-template threejs-project
-```
+## Feature #2: Playback of recordings
+I used Three.js as my 3D environment of choice. During playback the boxes that make up the puppet are positioned equal to the most current timestamp of puppet poses. I initially tried adding interpolation between poses to account for low-end devices with lower frame rates, but it looked unnatural, so I reverted to a simpler approach. In parallel, audio plays alongside the puppets, with optional pitch adjustments for a comical effect. Users can also record a video of the scene and download it afterwards.
 
----
-<img width="796" alt="screenshot" src="https://github.com/pachoclo/vite-threejs-ts-template/assets/3608140/4b377045-8be5-4021-8cb8-84346a23f680">
----
+I’m equally happy with this feature. The puppets are expressive and entertaining. Adding costumes and a 3D theatre background enhances the overall experience.
 
-## Stuff included in the `SampleScene.ts`
+I planned the visuals and functionality for my 3D scene beforehand on paper. This helped in getting a clear picture of what needed to be done in order to make things work.
 
-- [x] Geometry
-- [x] Material
-- [x] Mesh
-- [x] Ambient Light
-- [x] Point Light
-- [x] Camera
-- [x] Scene
-- [x] Canvas
-- [x] Renderer (WebGL)
-- [x] Loading Manager
-- [x] Orbit Controls
-- [x] Drag Controls
-- [x] Grid
-- [x] Antialias enabled
-- [x] Transparent canvas
-- [x] Responsive renderer and camera (to canvas size)
-- [x] Animation Loop
-- [x] Shadows
-- [x] Stats (FPS, ms)
-- [x] Full screen (double-click on canvas)
-- [x] Debug GUI
+Again, I wouldn’t change much. Clear planning, deadlines, and prioritising core elements helped me finish everything I intended. While additional features were planned, which can be seen below, time constraints limited my scope.
 
-## Tech Stack
+## Outlook
+Features I’d like to add include:
+- Adjusting pitch to reflect the speaking hand, e.g., a high pitch for the left and a low pitch for the right
+- Using LLMs to analyse and title the puppet show based on the voice recording.
+- Offloading playback to a backend service to generate a video automatically rather than handling everything in frontend.
+- Enhancing visuals by adding theatre curtains, shadows, lighting, and more realistic sock puppet models controlled using inverse kinematics.
 
-- Three.js
-- TypeScript
-- Vite
+## Verdict
+Overall I’m very pleased with how this project turned out. The idea feels fun and unique, and the basic prototype performed smoothly. I enjoyed adding details and refining the code, and I’d love to expand this project further in the future.
 
-## CLI Commands
+## Credits
 
-Installation
-
-```bash
-npm i
-```
-
-Run dev mode
-
-```bash
-npm run dev
-```
-
-Build
-
-```bash
-npm run build
-```
-
-Run build
-
-```bash
-npm run preview
-```
+Punch & Judy Puppet Stage by Don Carson <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a><br>
+Glasses by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/9i5mmOwt7cu">Poly Pizza</a><br>
+Top hat by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/e5kV1Y_cZJt">Poly Pizza</a>
