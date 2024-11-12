@@ -38,7 +38,7 @@ export class HandScene {
         this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         this._origin = new THREE.Object3D();
-        this._origin.add(new THREE.AxesHelper(0.1));
+        // this._origin.add(new THREE.AxesHelper(0.1));
         this._scene.add(this._origin);
         this._origin.rotateY(Math.PI);
 
