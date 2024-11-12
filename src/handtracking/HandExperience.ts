@@ -6,6 +6,8 @@ import {HandTracking} from "./HandTracking";
 import {IHandPose} from "../interfaces/IHandPose";
 
 export class HandExperience {
+    private readonly _pitchShift: Tone.PitchShift;
+
     private _handPoseRecording: HandPoseRecording = new HandPoseRecording();
     private _audioBlob!: Blob;
     private _audioRecorder!: MediaRecorder;
@@ -16,7 +18,6 @@ export class HandExperience {
     private _mediaRecorder!: MediaRecorder;
     private _player: Tone.Player;
     private _threeCanvas: HTMLCanvasElement;
-    private _pitchShift: Tone.PitchShift;
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement) {
         this._handTracking = new HandTracking(video, canvasElement, canvasCtx);
@@ -76,6 +77,10 @@ export class HandExperience {
 
     public loadHandPoseRecordingData(data: IPuppetPoseRecordingData) {
         this._handPoseRecording.loadHandPoseRecordingData(data);
+    }
+
+    public setPitchShift(value: number) {
+        this._pitchShift.pitch = value;
     }
 
     public loadAudioFile(blob: Blob) {

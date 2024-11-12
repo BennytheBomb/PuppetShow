@@ -14,6 +14,7 @@ const threeCanvas = document.getElementById("scene") as HTMLCanvasElement;
 const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 const recordCheckbox = document.getElementById("recordCheckbox") as HTMLInputElement;
 const costumesCheckbox = document.getElementById("costumesCheckbox") as HTMLInputElement;
+const pitchSlider = document.getElementById("pitchSlider") as HTMLInputElement;
 
 let audioBlob: Blob;
 let videoBlob: Blob;
@@ -72,6 +73,10 @@ downloadButton.addEventListener("click", () => {
 
 uploadButton.addEventListener("click", () => {
     handleFileUpload();
+});
+
+pitchSlider.addEventListener("input", () => {
+    handExperience.setPitchShift(parseFloat(pitchSlider.value));
 });
 
 function handleFileUpload() {
