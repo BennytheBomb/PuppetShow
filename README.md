@@ -25,6 +25,8 @@ This project is a virtual hand puppet show that combines Google’s MediaPipe ha
 
 ![hand_puppet.png](hand_puppet.png)
 
+[Video demonstration](demo_video.mp4)
+
 ## Feature #1: Recording hand poses
 MediaPipe’s hand tracking detects a set of 21 hand landmarks, allowing each camera frame to be processed using a combination of computer vision and machine learning. These landmarks are transformed into hand poses that excludes recordings with low confidence, minimal motion and small time frames to reduce data load. Filtered points get transformed into a puppet pose with five main points and a directional vector, that make up the anchor points of the three puppet parts: a palm box and two hinged boxes for the fingers and thumb.
 I’m very pleased with how this feature came out. The recording system is simple and adaptable, with a clear separation between data recording and visual presentation.
