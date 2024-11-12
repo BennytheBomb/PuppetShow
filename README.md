@@ -1,5 +1,26 @@
 # Puppet Show
 
+## Requirements
+
+- Node.js (mine is v21.1.0)
+- npm (mine is 10.2.0)
+- A modern browser like Chrome or Firefox (developed in Chrome)
+
+## Project setup & instructions
+
+1. Run `npm install` to install the required dependencies.
+2. Run `npm run dev` to start the development server.
+3. Open `http://localhost:5173` in your browser. 
+   1. The port may vary depending on your system configuration.
+   2. Use a modern browser like Chrome or Firefox for the best experience.
+4. Allow access to your camera and microphone when prompted. Otherwise the app won't work.
+5. There is already a sample recording available. Press the "playback" button to see it.
+6. Press the "record" button to record your own puppet show. Press "stop recording" to stop recording.
+7. Press the "playback" button to see your recording.
+8. Press the "download" button to download the recording as a video. Make sure "Record Video" is toggled.
+9. Press the "costumes" button to toggle the costumes on and off.
+10. Use the "pitch" slider to adjust the pitch of the voices.
+
 This project is a virtual hand puppet show that combines Google’s MediaPipe hand-tracking with Three.js. Users record hand and voice input to create a puppet show with two talking figures. MediaPipe provides 21 hand landmarks, which I simplify into five key points and a directional vector for each puppet. After recording, users can playback the show, toggle on or off costumes, adjust the voices pitch, and navigate around the 3D scene. The recording can then be saved as a video.
 
 ![hand_puppet.png](hand_puppet.png)
@@ -31,6 +52,8 @@ Overall I’m very pleased with how this project turned out. The idea feels fun 
 
 ## Credits
 
-Punch & Judy Puppet Stage by Don Carson <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a><br>
-Glasses by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/9i5mmOwt7cu">Poly Pizza</a><br>
-Top hat by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a href="https://poly.pizza/m/e5kV1Y_cZJt">Poly Pizza</a>
+The project used a fork starter template from GitHub user [pachoclo](https://github.com/pachoclo/vite-threejs-ts-template)
+
+Punch & Judy Puppet Stage by Don Carson [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/9i5mmOwt7cu)\
+Glasses by jeremy [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/9i5mmOwt7cu)\
+Top hat by jeremy [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/e5kV1Y_cZJt)
