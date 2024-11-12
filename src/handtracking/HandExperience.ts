@@ -139,7 +139,6 @@ export class HandExperience {
         const audioContext = this._player.context;
         const mediaStreamDestination = audioContext.createMediaStreamDestination();
 
-        this._player.connect(this._pitchShift);
         this._pitchShift.connect(mediaStreamDestination);
 
         const audioStream = mediaStreamDestination.stream;
@@ -162,6 +161,8 @@ export class HandExperience {
     }
 
     private onPlaybackStart(recordVideo: boolean) {
+        this._player.connect(this._pitchShift);
+
         if (recordVideo) this.recordVideo();
 
         this._player.start();
