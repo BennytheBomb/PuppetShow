@@ -1,6 +1,4 @@
-import {FilesetResolver, HandLandmarker, HandLandmarkerResult} from "@mediapipe/tasks-vision";
-import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
-import {HAND_CONNECTIONS} from "@mediapipe/hands";
+import {DrawingUtils, FilesetResolver, HandLandmarker, HandLandmarkerResult} from "@mediapipe/tasks-vision";
 import {HandSide, IHandPose} from "../interfaces/IHandPose";
 import {Vector3} from "three";
 
@@ -13,11 +11,13 @@ export class HandTracking {
     private _webcamRunning: Boolean = false;
     private _lastVideoTime = -1;
     private _results!: HandLandmarkerResult;
+    private drawingUtils: DrawingUtils;
 
     constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D) {
         this._video = video;
         this._canvasElement = canvasElement;
         this._canvasCtx = canvasCtx;
+        this.drawingUtils = new DrawingUtils(this._canvasCtx);
 
         if (!this.hasGetUserMedia()) {
             console.warn("getUserMedia() is not supported by your browser");
@@ -45,10 +45,10 @@ export class HandTracking {
     }
 
     private async createHandLandmarker() {
-        const vision = await FilesetResolver.forVisionTasks("./node_modules/@mediapipe/tasks-vision/wasm");
+        const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
         this._handLandmarker = await HandLandmarker.createFromOptions(vision, {
             baseOptions: {
-                modelAssetPath: "../models/hand_landmarker.task",
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
                 delegate: "GPU"
             },
             runningMode: HandTracking.RUNNING_MODE,
@@ -84,11 +84,11 @@ export class HandTracking {
         this._canvasCtx.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
         if (this._results?.landmarks) {
             for (const landmarks of this._results.landmarks) {
-                drawConnectors(this._canvasCtx, landmarks, HAND_CONNECTIONS, {
+                this.drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, {
                     color: "#00FF00",
                     lineWidth: 5
                 });
-                drawLandmarks(this._canvasCtx, landmarks, {color: "#FF0000", lineWidth: 0.1});
+                this.drawingUtils.drawLandmarks(landmarks, {color: "#FF0000", lineWidth: 0.1});
             }
         }
 
@@ -141,3 +141,4 @@ export class HandTracking {
         });
     }
 }
+
