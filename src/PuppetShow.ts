@@ -21,8 +21,8 @@ let videoBlob: Blob;
 let recordVideo = false;
 
 const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas);
-handExperience.onDataLoaded = () => {
-    uploadStatus.innerHTML = "Sample data loaded from server!";
+handExperience.onDataLoaded = (success) => {
+    if (success) uploadStatus.innerHTML = "Sample data loaded from server!";
 };
 handExperience.onNewVideoRecording = (blob: Blob) => {
     videoBlob = blob;

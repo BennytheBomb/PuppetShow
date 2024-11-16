@@ -39,9 +39,9 @@ export class HandExperience {
         this.init();
     }
 
-    private _onDataLoaded!: () => void;
+    private _onDataLoaded!: (success: boolean) => void;
 
-    public set onDataLoaded(value: () => void) {
+    public set onDataLoaded(value: (success: boolean) => void) {
         this._onDataLoaded = value;
     }
 
@@ -179,14 +179,17 @@ export class HandExperience {
     }
 
     private async loadData() {
+        let success = true;
         const jsonData = await this.fetchJsonData();
-        this.loadHandPoseRecordingData(jsonData);
+        if (jsonData) this.loadHandPoseRecordingData(jsonData);
+        else success = false;
 
         const audioFile = await this.fetchWavData();
-        this.loadAudioFile(audioFile);
+        if (audioFile) this.loadAudioFile(audioFile);
+        else success = false;
 
         if (this._onDataLoaded) {
-            this._onDataLoaded();
+            this._onDataLoaded(success);
         }
     }
 
@@ -199,12 +202,22 @@ export class HandExperience {
     }
 
     private async fetchJsonData() {
-        const response = await fetch("/recordings/data.json");
-        return await response.json();
+        try {
+            const response = await fetch("./recordings/data.json");
+            if (response.ok) return await response.json();
+        } catch (error) {
+            console.warn("Can't fetch pre-recorded json:", error);
+        }
+        return null;
     }
 
     private async fetchWavData() {
-        const response = await fetch("/recordings/audio.wav");
-        return await response.blob();
+        try {
+            const response = await fetch("./recordings/audio.wav");
+            if (response.ok) return await response.blob();
+        } catch (error) {
+            console.error("Can't fetch pre-recorded audio:", error);
+        }
+        return null;
     }
 }
