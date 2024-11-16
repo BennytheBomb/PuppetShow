@@ -193,7 +193,7 @@ export class HandPuppet extends THREE.Object3D {
         this._leftEye.position.set(-0.02, 0.02, 0.03);
         this._rightEye.position.set(0.02, 0.02, 0.03);
 
-        loader.load("../3d-models/glasses.glb", (gltf: GLTF) => {
+        loader.load("./3d-models/glasses.glb", (gltf: GLTF) => {
             this._accessory = gltf.scene;
             this._fingerBox.add(this._accessory);
             this._accessory.rotateX(-Math.PI / 2);
@@ -209,7 +209,7 @@ export class HandPuppet extends THREE.Object3D {
         this._leftEye.position.set(-0.02, 0.02, -0.03);
         this._rightEye.position.set(0.02, 0.02, -0.03);
 
-        loader.load("../3d-models/top_hat.glb", (gltf: GLTF) => {
+        loader.load("./3d-models/top_hat.glb", (gltf: GLTF) => {
             this._accessory = gltf.scene;
             this._fingerBox.add(this._accessory);
             this._accessory.rotateX(-Math.PI / 2 - 0.7);

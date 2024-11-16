@@ -78,7 +78,7 @@ export class HandScene {
 
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
-        this._loader.load("../3d-models/theatre.glb", (gltf: GLTF) => {
+        this._loader.load("./3d-models/theatre.glb", (gltf: GLTF) => {
             this._theatre = gltf.scene;
             this._scene.add(this._theatre);
 
