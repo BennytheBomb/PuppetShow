@@ -32,7 +32,6 @@ export class HandExperience {
         this.onPlaybackEnd = this.onPlaybackEnd.bind(this);
         this._handScene.onPlaybackFinished = this.onPlaybackEnd;
 
-        // TODO: make pitch shift field and adjustable during runtime
         this._pitchShift = new Tone.PitchShift(4).toDestination();
         this._player = new Tone.Player();
 
@@ -85,7 +84,7 @@ export class HandExperience {
 
     public loadAudioFile(blob: Blob) {
         this._audioBlob = blob;
-        this._onNewAudioRecording(this._audioBlob);
+        if (this._onNewAudioRecording) this._onNewAudioRecording(this._audioBlob);
     }
 
     public async startRecording() {
@@ -133,7 +132,7 @@ export class HandExperience {
 
         this._audioRecorder.onstop = () => {
             this._audioBlob = new Blob(this._audioChunks, {type: 'audio/wav'});
-            this._onNewAudioRecording(this._audioBlob);
+            if (this._onNewAudioRecording) this._onNewAudioRecording(this._audioBlob);
         };
     }
 

@@ -21,7 +21,8 @@ export class HandScene {
     private _renderer: THREE.WebGLRenderer;
     private _controls: OrbitControls;
     private _isPlaying = false;
-    private _loader: GLTFLoader = new GLTFLoader();
+    private _gltfLoader: GLTFLoader = new GLTFLoader();
+    private _textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
     private _startPlaybackTime = -1;
 
     constructor(canvas: HTMLCanvasElement, lerpPositions = false) {
@@ -42,8 +43,8 @@ export class HandScene {
         this._scene.add(this._origin);
         this._origin.rotateY(Math.PI);
 
-        this._leftHand = new HandPuppet(HandScene.JOINTS, 0x00ff00, "Left", this._loader);
-        this._rightHand = new HandPuppet(HandScene.JOINTS, 0xff0000, "Right", this._loader);
+        this._leftHand = new HandPuppet(HandScene.JOINTS, 0x00ff00, "Left", this._gltfLoader);
+        this._rightHand = new HandPuppet(HandScene.JOINTS, 0xff0000, "Right", this._gltfLoader);
 
         this._origin.add(this._leftHand);
         this._origin.add(this._rightHand);
@@ -78,7 +79,7 @@ export class HandScene {
 
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
-        this._loader.load("./3d-models/theatre.glb", (gltf: GLTF) => {
+        this._gltfLoader.load("./3d-models/theatre.glb", (gltf: GLTF) => {
             this._theatre = gltf.scene;
             this._scene.add(this._theatre);
 
@@ -87,6 +88,14 @@ export class HandScene {
         }, undefined, (error) => {
             console.error(error);
         });
+
+        const texture = this._textureLoader.load(
+            './background.png',
+            () => {
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                texture.colorSpace = THREE.SRGBColorSpace;
+                this._scene.background = texture;
+            });
     }
 
     private _onPlaybackFinished!: () => void;

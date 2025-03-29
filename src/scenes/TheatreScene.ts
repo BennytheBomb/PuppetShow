@@ -4,7 +4,7 @@ import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
-const loader: GLTFLoader = new GLTFLoader();
+const gltfLoader: GLTFLoader = new GLTFLoader();
 
 setup();
 
@@ -25,7 +25,7 @@ function setup() {
 
     camera.position.set(0, 0.1, 0.2);
 
-    loader.load("../3d-models/theatre.glb", function (gltf: GLTF) {
+    gltfLoader.load("../3d-models/theatre.glb", function (gltf: GLTF) {
         scene.add(gltf.scene);
     }, undefined, function (error) {
         console.error(error);
