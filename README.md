@@ -44,10 +44,10 @@ Again, I wouldn’t change much. Clear planning, deadlines, and prioritising cor
 
 ## Outlook
 Features I’d like to add include:
-- Adjusting pitch to reflect the speaking hand, e.g., a high pitch for the left and a low pitch for the right
-- Using LLMs to analyse and title the puppet show based on the voice recording.
-- Offloading playback to a backend service to generate a video automatically rather than handling everything in frontend.
-- Enhancing visuals by adding theatre curtains, shadows, lighting, and more realistic sock puppet models controlled using inverse kinematics.
+- [x] Adjusting pitch to reflect the speaking hand, e.g., a high pitch for the left and a low pitch for the right
+- [ ] Using LLMs to analyse and title the puppet show based on the voice recording.
+- [ ] Offloading playback to a backend service to generate a video automatically rather than handling everything in frontend.
+- [ ] Enhancing visuals by adding theatre curtains, shadows, lighting, and more realistic sock puppet models controlled using inverse kinematics.
 
 ## Verdict
 Overall I’m very pleased with how this project turned out. The idea feels fun and unique, and the basic prototype performed smoothly. I enjoyed adding details and refining the code, and I’d love to expand this project further in the future.
