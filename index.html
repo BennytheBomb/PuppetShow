@@ -8,14 +8,17 @@
     <script src="src/Main.ts" type="module"></script>
 </head>
 <body class="d-flex h-100 text-center text-bg-dark">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-1 flex-column">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="p-3 rounded" style="background-color: #343a40;">
             <h3 class="float-md-start mb-0">Puppet Show</h3>
         </header>
-        <main class="row mt-3 gy-3 mx-3">
-            <div class="container px-0" style="width: 100%; max-width: 700px">
-                <div id="video_container" style="position: relative; min-width: 300px; max-width: 700px; max-height: calc(100vh - 40px); width: 100%; height: auto; aspect-ratio: 1.4;">
-                    <canvas id="output_canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+        <div id="mediaPrompt" class="alert alert-warning mt-4" role="alert">
+            Please enable both webcam and microphone to use this application.
+        </div>
+        <main id="mainContent" class="row m-3 gap-3 row-cols-1 row-cols-md-2">
+            <div class="container px-0 col" style="width: 100%; max-width: 700px">
+                <div id="videoContainer" style="position: relative; min-width: 300px; max-width: 700px; max-height: calc(100vh - 40px); width: 100%; height: auto; aspect-ratio: 1.4;">
+                    <canvas id="outputCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
                     <video id="webcam" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; object-fit: cover" autoplay playsinline></video>
                 </div>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 gap-3 justify-content-center align-items-center mt-3">
@@ -25,13 +28,11 @@
                     <span id="uploadStatus" class="col-10 col-lg-3 order-4 order-lg-2">
                         Loading...
                     </span>
-                    <div class="progress col-10 col-md-5 col-lg-4 order-2 order-lg-3" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar" style="width: 0%"></div>
-                    </div>
+                    <progress id="progressBar" max="1" value="0" class="col-10 col-md-5 col-lg-4 order-2 order-lg-3"></progress>
                 </div>
             </div>
 
-            <div class="container px-0" style="width: 100%; max-width: 700px">
+            <div class="container px-0 col" style="width: 100%; max-width: 700px">
                 <canvas id="scene" style="min-width: 300px; max-width: 700px; max-height: calc(100vh - 40px); width: 100%; height: auto; aspect-ratio: 1.4;"></canvas>
                 <div class="row row-cols-2 row-cols-md-5 gap-3 justify-content-center mt-3">
                     <button id="playbackButton" class="btn btn-primary col-5 order-1">
@@ -55,19 +56,37 @@
                 </div>
             </div>
         </main>
-        <footer class="m-1 mt-5 mb-3 p-4 rounded text-center" style="background-color: #343a40;">
-            <h3>Asset Sources</h3>
-            <p class="font-monospace">
-                Punch &amp; Judy Puppet Stage by Don Carson <a
-                    href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
-                    href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a><br/>
-                Glasses by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
-                    href="https://poly.pizza/m/9i5mmOwt7cu">Poly Pizza</a><br/>
-                Top hat by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
-                    href="https://poly.pizza/m/e5kV1Y_cZJt">Poly Pizza</a><br/>
-                Santa Hat by Joe Dorman <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
-                    href="https://poly.pizza/m/3QKT0IHKALm">Poly Pizza</a>
-            </p>
+        <footer class="m-1 mt-3 mb-3 p-4 rounded row row-cols-1 row-cols-md-2" style="background-color: #343a40;">
+            <div class="col text-start">
+                <h4>Asset Sources</h4>
+                <p class="font-monospace">
+                    Punch &amp; Judy Puppet Stage by Don Carson <a
+                        href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
+                        href="https://poly.pizza/m/1mDRXAZnGqC">Poly Pizza</a><br/>
+                    Glasses by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
+                        href="https://poly.pizza/m/9i5mmOwt7cu">Poly Pizza</a><br/>
+                    Top hat by jeremy <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
+                        href="https://poly.pizza/m/e5kV1Y_cZJt">Poly Pizza</a><br/>
+                    Santa Hat by Joe Dorman <a href="https://creativecommons.org/licenses/by/3.0/">[CC-BY]</a> via <a
+                        href="https://poly.pizza/m/3QKT0IHKALm">Poly Pizza</a>
+                </p>
+            </div>
+            <div class="col text-start">
+                <h4>About</h4>
+                <p>Benjamin Christian Daniel</p>
+                <div class="flex-row d-flex gap-3">
+                    <a href="https://www.linkedin.com/in/benjaminchrdaniel/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/BennytheBomb">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
         </footer>
         <br>
     </div>

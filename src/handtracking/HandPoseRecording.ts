@@ -33,6 +33,10 @@ export class HandPoseRecording {
         return (this._leftHandPoses.length > 0 || this._rightHandPoses.length > 0) && this.duration > 0;
     }
 
+    public get startTime(): number {
+        return this._startTime;
+    }
+
     public startRecording() {
         this._startTime = performance.now();
         this._endTime = -1;
@@ -52,7 +56,7 @@ export class HandPoseRecording {
 
     public recordHandPose(handPose: IHandPose) {
         if (handPose.score < HandPoseRecording.CONFIDENCE_SCORE_THRESHOLD) {
-            console.log("skipping pose - confidence score too low");
+            // console.log("skipping pose - confidence score too low");
             return;
         }
 
@@ -72,7 +76,7 @@ export class HandPoseRecording {
         const motionScore = this.calculateMotionScore(handPose, previousHandPose);
 
         if (motionScore < HandPoseRecording.MOTION_SCORE_MIN_THRESHOLD) {
-            console.log("skipping pose - motion score too low");
+            // console.log("skipping pose - motion score too low");
             return;
         }
 
@@ -104,7 +108,7 @@ export class HandPoseRecording {
             this._previousRightHandPose = handPose;
         }
 
-        console.log("recording hand pose");
+        // console.log("recording hand pose");
     }
 
     private createPuppetPose(handPose: IHandPose): IPuppetPose {

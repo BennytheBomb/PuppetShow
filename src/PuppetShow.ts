@@ -1,7 +1,7 @@
 // import {IPuppetPoseRecordingData} from "./interfaces/IPuppetPoseRecordingData";
 import {HandExperience} from "./handtracking/HandExperience";
 
-const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
+const canvasElement = document.getElementById("outputCanvas") as HTMLCanvasElement;
 const recordButton = document.getElementById("recordButton") as HTMLButtonElement;
 const playbackButton = document.getElementById("playbackButton") as HTMLButtonElement;
 // const downloadButton = document.getElementById("downloadButton") as HTMLButtonElement;
@@ -15,6 +15,10 @@ const canvasCtx: CanvasRenderingContext2D = canvasElement.getContext("2d") as Ca
 const recordCheckbox = document.getElementById("recordCheckbox") as HTMLInputElement;
 const costumesCheckbox = document.getElementById("costumesCheckbox") as HTMLInputElement;
 const pitchSlider = document.getElementById("pitchSlider") as HTMLInputElement;
+const mainContent = document.getElementById("mainContent") as HTMLElement;
+const mediaPrompt = document.getElementById("mediaPrompt") as HTMLDivElement;
+const videoContainer = document.getElementById('videoContainer') as HTMLDivElement;
+const progressBar = document.getElementById("progressBar") as HTMLProgressElement;
 
 // let audioBlob: Blob;
 let videoBlob: Blob;
@@ -34,57 +38,67 @@ window.addEventListener("resize", resize);
 
 resize();
 
-// Add this script to dynamically set the aspect ratio based on the webcam
-const videoContainer = document.getElementById('video_container') as HTMLDivElement;
+async function checkMediaAccess() {
+    try {
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        mediaPrompt.style.display = 'none';
+        start();
+    } catch (e) {
+        mainContent.style.display = 'none';
+    }
+}
 
-video.addEventListener('loadedmetadata', () => {
-    const aspectRatio = video.videoWidth / video.videoHeight;
-    console.log(aspectRatio)
-    videoContainer.style.aspectRatio = `${aspectRatio}`;
-});
+checkMediaAccess();
 
-const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas);
-handExperience.onDataLoaded = (success) => {
-    if (success) uploadStatus.innerHTML = "Sample data loaded from server!";
-};
-handExperience.onNewVideoRecording = (blob: Blob) => {
-    videoBlob = blob;
-    downloadVideoButton.disabled = false;
-    console.log("got the video recording");
-};
+// start()
+
+function start() {
+    const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas, progressBar);
+    handExperience.onDataLoaded = (success) => {
+        if (success) uploadStatus.innerHTML = "Sample data loaded from server!";
+    };
+    handExperience.onNewVideoRecording = (blob: Blob) => {
+        videoBlob = blob;
+        downloadVideoButton.disabled = false;
+        // console.log("got the video recording");
+    };
 // handExperience.onNewAudioRecording = (blob: Blob) => {
 //     audioBlob = blob;
 //     console.log("got the audio recording");
 // };
 
-downloadVideoButton.addEventListener("click", () => {
-    if (videoBlob) {
-        downloadFile(videoBlob, "video.webm");
-    }
-});
-recordCheckbox.addEventListener("change", () => {
-    recordVideo = recordCheckbox.checked;
-});
+    downloadVideoButton.addEventListener("click", () => {
+        if (videoBlob) {
+            downloadFile(videoBlob, "video.webm");
+        }
+    });
+    recordCheckbox.addEventListener("change", () => {
+        recordVideo = recordCheckbox.checked;
+    });
 
-costumesCheckbox.addEventListener("change", () => {
-    handExperience.setAccessoryVisible(costumesCheckbox.checked);
-});
+    costumesCheckbox.addEventListener("change", () => {
+        handExperience.setAccessoryVisible(costumesCheckbox.checked);
+    });
 
-recordButton.addEventListener("click", () => {
-    if (!handExperience.recording) {
-        handExperience.startRecording();
-    } else {
-        handExperience.stopRecording();
-    }
+    recordButton.addEventListener("click", () => {
+        if (!handExperience.recording) {
+            handExperience.startRecording();
+        } else {
+            handExperience.stopRecording();
+        }
 
-    recordButton.innerHTML = handExperience.recording ? "Stop Recording" : "Record";
-});
+        recordButton.innerHTML = handExperience.recording ? "Stop Recording" : "Record";
+    });
 
-playbackButton.addEventListener("click", () => {
-    if (handExperience.hasRecording && !handExperience.recording) {
-        handExperience.playRecording(recordVideo);
-    }
-});
+    handExperience.onNewHandRecording = () => {
+        recordButton.innerHTML = handExperience.recording ? "Stop Recording" : "Record";
+    };
+
+    playbackButton.addEventListener("click", () => {
+        if (handExperience.hasRecording && !handExperience.recording) {
+            handExperience.playRecording(recordVideo);
+        }
+    });
 
 // downloadButton.addEventListener("click", () => {
 //     if (handExperience.hasRecording) {
@@ -98,9 +112,21 @@ playbackButton.addEventListener("click", () => {
 //     handleFileUpload();
 // });
 
-pitchSlider.addEventListener("input", () => {
-    handExperience.setPitchShift(parseFloat(pitchSlider.value));
+    pitchSlider.addEventListener("input", () => {
+        handExperience.setPitchShift(parseFloat(pitchSlider.value));
+    });
+
+}
+
+// Add this script to dynamically set the aspect ratio based on the webcam
+
+
+video.addEventListener('loadedmetadata', () => {
+    const aspectRatio = video.videoWidth / video.videoHeight;
+    // console.log(aspectRatio)
+    videoContainer.style.aspectRatio = `${aspectRatio}`;
 });
+
 
 // function handleFileUpload() {
 //     if (!input || !input.files || input.files.length === 0) {

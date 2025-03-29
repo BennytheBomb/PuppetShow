@@ -6,6 +6,8 @@ import {HandTracking} from "./HandTracking";
 import {IHandPose} from "../interfaces/IHandPose";
 
 export class HandExperience {
+    private static readonly RECORDING_TIME: number = 15000; // in milliseconds
+
     private readonly _pitchShift: Tone.PitchShift;
 
     private _handPoseRecording: HandPoseRecording = new HandPoseRecording();
@@ -18,11 +20,13 @@ export class HandExperience {
     private _mediaRecorder!: MediaRecorder;
     private _player: Tone.Player;
     private _threeCanvas: HTMLCanvasElement;
+    private _progressBar: HTMLProgressElement;
 
-    constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement) {
+    constructor(video: HTMLVideoElement, canvasElement: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, threeCanvas: HTMLCanvasElement, progressBar: HTMLProgressElement) {
         this._handTracking = new HandTracking(video, canvasElement, canvasCtx);
 
         this._threeCanvas = threeCanvas;
+        this._progressBar = progressBar;
 
         this.onHandPosesDetected = this.onHandPosesDetected.bind(this);
         this._handTracking.handPosesDetectedCallback = this.onHandPosesDetected;
@@ -48,6 +52,12 @@ export class HandExperience {
 
     public set onNewVideoRecording(value: (blob: Blob) => void) {
         this._onNewVideoRecording = value;
+    }
+
+    private _onNewHandRecording!: () => void;
+
+    public set onNewHandRecording(value: () => void) {
+        this._onNewHandRecording = value;
     }
 
     private _onNewAudioRecording!: (blob: Blob) => void;
@@ -106,6 +116,8 @@ export class HandExperience {
         if (this._audioRecorder) {
             this._audioRecorder.stop();
         }
+
+        if (this._onNewHandRecording) this._onNewHandRecording();
     }
 
     public async playRecording(recordVideo: boolean) {
@@ -158,7 +170,7 @@ export class HandExperience {
 
         this._mediaRecorder.onstop = () => {
             const blob = new Blob(this._chunks, {type: 'video/webm'});
-            this._onNewVideoRecording(blob);
+            if (this._onNewVideoRecording) this._onNewVideoRecording(blob);
         };
 
         this._mediaRecorder.start();
@@ -194,6 +206,13 @@ export class HandExperience {
 
     private onHandPosesDetected(handPoses: IHandPose[]) {
         if (!this._recording) return;
+
+        const duration = performance.now() - this._handPoseRecording.startTime;
+        this._progressBar.value = duration / HandExperience.RECORDING_TIME;
+
+        if (duration >= HandExperience.RECORDING_TIME) {
+            this.stopRecording()
+        }
 
         for (const handPose of handPoses) {
             this._handPoseRecording.recordHandPose(handPose);
