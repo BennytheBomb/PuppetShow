@@ -60,4 +60,3 @@ Punch & Judy Puppet Stage by Don Carson [CC-BY](https://creativecommons.org/lice
 Glasses by jeremy [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/9i5mmOwt7cu)\
 Top hat by jeremy [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/e5kV1Y_cZJt)\
 Santa Hat by Joe Dorman [CC-BY](https://creativecommons.org/licenses/by/3.0/) via [Poly Pizza](https://poly.pizza/m/3QKT0IHKALm)
-                        href="">Poly Pizza</a>
