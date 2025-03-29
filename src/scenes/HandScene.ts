@@ -24,9 +24,12 @@ export class HandScene {
     private _gltfLoader: GLTFLoader = new GLTFLoader();
     private _textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
     private _startPlaybackTime = -1;
+    private _canvas: HTMLCanvasElement;
 
     constructor(canvas: HTMLCanvasElement, lerpPositions = false) {
         this._lerpPositions = lerpPositions;
+
+        this._canvas = canvas;
 
         this._scene = new THREE.Scene();
         this._scene.background = new THREE.Color(0x000000);
@@ -78,6 +81,7 @@ export class HandScene {
         this._scene.add(spotLightLeftHand);
 
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
+        this._controls.saveState()
 
         this._gltfLoader.load("./3d-models/theatre.glb", (gltf: GLTF) => {
             this._theatre = gltf.scene;
@@ -96,6 +100,12 @@ export class HandScene {
                 texture.colorSpace = THREE.SRGBColorSpace;
                 this._scene.background = texture;
             });
+    }
+
+    public onResize() {
+        this._renderer.setViewport(0, 0, this._canvas.clientWidth, this._canvas.clientHeight);
+        this._controls.reset();
+        this._controls.update();
     }
 
     private _onPlaybackFinished!: () => void;

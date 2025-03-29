@@ -23,6 +23,7 @@ const progressBar = document.getElementById("progressBar") as HTMLProgressElemen
 // let audioBlob: Blob;
 let videoBlob: Blob;
 let recordVideo = false;
+var handExperience: HandExperience
 
 function resize() {
     const style = getComputedStyle(canvasElement)
@@ -32,6 +33,10 @@ function resize() {
     const threeStyle = getComputedStyle(threeCanvas)
     threeCanvas.width = parseInt(threeStyle.width);
     threeCanvas.height = parseInt(threeStyle.height);
+
+    if (handExperience) {
+        handExperience.onResize();
+    }
 }
 
 window.addEventListener("resize", resize);
@@ -53,7 +58,7 @@ checkMediaAccess();
 // start()
 
 function start() {
-    const handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas, progressBar);
+    handExperience = new HandExperience(video, canvasElement, canvasCtx, threeCanvas, progressBar);
     handExperience.onDataLoaded = (success) => {
         if (success) uploadStatus.innerHTML = "Sample data loaded from server!";
     };

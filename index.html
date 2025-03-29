@@ -38,16 +38,24 @@
                     <button id="playbackButton" class="btn btn-primary col-5 order-1">
                         Playback
                     </button>
-                    <div class="p-0 col-5 order-2">
-                        <input type="checkbox" class="btn-check" id="recordCheckbox" autocomplete="off">
-                        <label class="btn btn-outline-secondary h-100 w-100 align-content-center px-1" for="recordCheckbox">Record Video</label>
+<!--                    <div class="p-0 col-5 order-2">-->
+<!--                        <input type="checkbox" class="btn-check" id="recordCheckbox" autocomplete="off">-->
+<!--                        <label class="btn btn-outline-secondary h-100 w-100 align-content-center px-1" for="recordCheckbox">Record Video</label>-->
+<!--                    </div>-->
+                    <div class="p-0 col-5 mb-0 order-2 form-check form-switch align-content-center">
+                        <input class="form-check-input m-0 mt-1" type="checkbox" role="switch" id="recordCheckbox" autocomplete="off">
+                        <label class="form-check-label ms-1" for="recordCheckbox">Record</label>
                     </div>
-                    <div class="p-0 col-5 order-3">
-                        <input type="checkbox" class="btn-check" id="costumesCheckbox" checked autocomplete="off">
-                        <label class="btn btn-outline-secondary h-100 w-100 align-content-center" for="costumesCheckbox">Show Costumes</label>
+                    <div class="p-0 col-5 mb-0 order-2 form-check form-switch align-content-center">
+                        <input class="form-check-input m-0 mt-1" type="checkbox" role="switch" id="costumesCheckbox" autocomplete="off" checked>
+                        <label class="form-check-label" for="costumesCheckbox">Costumes</label>
                     </div>
-                    <div class="col-12 col-md-auto p-0 order-5 order-md-4 align-content-center">
-                        <label for="pitchSlider" class="form-label mb-0">Pitch</label>
+<!--                    <div class="p-0 col-5 order-3">-->
+<!--                        <input type="checkbox" class="btn-check" id="costumesCheckbox" checked autocomplete="off">-->
+<!--                        <label class="btn btn-outline-secondary h-100 w-100 align-content-center" for="costumesCheckbox">Show Costumes</label>-->
+<!--                    </div>-->
+                    <div class="col-12 col-md-auto p-0 order-5 order-md-4 p-1">
+                        <label for="pitchSlider" class="form-label mt-1">Pitch</label>
                         <input class="ms-2" type="range" min="-8" max="8" value="4" step="1" id="pitchSlider"/>
                     </div>
                     <button id="downloadVideoButton" class="btn btn-outline-primary col-5 order-4 order-md-5" disabled>

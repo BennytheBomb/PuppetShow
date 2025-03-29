@@ -42,6 +42,10 @@ export class HandExperience {
         this.init();
     }
 
+    public onResize() {
+        this._handScene.onResize();
+    }
+
     private _onDataLoaded!: (success: boolean) => void;
 
     public set onDataLoaded(value: (success: boolean) => void) {
