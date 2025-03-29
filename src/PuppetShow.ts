@@ -23,7 +23,7 @@ const progressBar = document.getElementById("progressBar") as HTMLProgressElemen
 // let audioBlob: Blob;
 let videoBlob: Blob;
 let recordVideo = false;
-var handExperience: HandExperience
+let handExperience: HandExperience
 
 function resize() {
     const style = getComputedStyle(canvasElement)
@@ -120,7 +120,6 @@ function start() {
     pitchSlider.addEventListener("input", () => {
         handExperience.setPitchShift(parseFloat(pitchSlider.value));
     });
-
 }
 
 // Add this script to dynamically set the aspect ratio based on the webcam
