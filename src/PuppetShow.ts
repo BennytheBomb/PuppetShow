@@ -69,7 +69,7 @@ function start() {
 
     downloadVideoButton.addEventListener("click", () => {
         if (videoBlob) {
-            downloadFile(videoBlob, "video.webm");
+            downloadFile(videoBlob, "video.mp4");
         }
     });
     recordCheckbox.addEventListener("change", () => {

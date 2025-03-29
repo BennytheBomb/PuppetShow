@@ -160,7 +160,7 @@ export class HandExperience {
         const audioStream = mediaStreamDestination.stream;
         const combinedStream = new MediaStream([...videoStream.getTracks(), ...audioStream.getTracks()]);
 
-        this._mediaRecorder = new MediaRecorder(combinedStream, {mimeType: 'video/webm'});
+        this._mediaRecorder = new MediaRecorder(combinedStream, {mimeType: 'video/mp4'});
 
         this._mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
@@ -169,7 +169,7 @@ export class HandExperience {
         };
 
         this._mediaRecorder.onstop = () => {
-            const blob = new Blob(this._chunks, {type: 'video/webm'});
+            const blob = new Blob(this._chunks, {type: 'video/mp4'});
             if (this._onNewVideoRecording) this._onNewVideoRecording(blob);
         };
 
