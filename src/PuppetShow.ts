@@ -34,6 +34,9 @@ function resize() {
     threeCanvas.width = parseInt(threeStyle.width);
     threeCanvas.height = parseInt(threeStyle.height);
 
+    const aspectRatio = video.videoWidth / video.videoHeight;
+    videoContainer.style.aspectRatio = `${aspectRatio}`;
+
     if (handExperience) {
         handExperience.onResize();
     }
@@ -127,7 +130,6 @@ function start() {
 
 video.addEventListener('loadedmetadata', () => {
     const aspectRatio = video.videoWidth / video.videoHeight;
-    // console.log(aspectRatio)
     videoContainer.style.aspectRatio = `${aspectRatio}`;
 });
 
