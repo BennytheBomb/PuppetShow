@@ -104,6 +104,9 @@ export class HandScene {
                 'nz.png'
             ] );
 
+        this.render = this.render.bind(this);
+        this._renderer.setAnimationLoop(this.render);
+
         // const texture = this._textureLoader.load(
         //     './background.png',
         //     () => {
@@ -136,9 +139,6 @@ export class HandScene {
         this._rightHandPoseIndex = 0;
         this._isPlaying = true;
         this._handPoseRecording = handPoseRecording;
-
-        this.render = this.render.bind(this);
-        this._renderer.setAnimationLoop(this.render);
     }
 
     private updateHand(handPuppet: HandPuppet, puppetPoses: IPuppetPose[], index: number, timeSinceStart: number) {
