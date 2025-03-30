@@ -47,7 +47,11 @@
                     <video id="webcam" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; object-fit: cover; transform: scaleX(-1)" autoplay playsinline></video>
                 </div>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 gap-3 justify-content-center align-items-center mt-3">
-                    <button id="recordButton" class="btn btn-primary col-10 col-md-5 col-lg-3 order-1">
+                    <button id="recordButton" class="btn btn-primary col-10 col-md-5 col-lg-3 order-1 d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record-circle me-2" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                            <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                        </svg>
                         Record
                     </button>
                     <span id="uploadStatus" class="col-10 col-lg-3 order-4 order-lg-2">
@@ -60,7 +64,10 @@
             <div class="container px-0 col" style="width: 100%; max-width: 700px">
                 <canvas id="scene" style="min-width: 300px; max-width: 700px; max-height: calc(100vh - 40px); width: 100%; height: auto; aspect-ratio: 1.4;"></canvas>
                 <div class="row row-cols-2 row-cols-md-5 gap-3 justify-content-center mt-3">
-                    <button id="playbackButton" class="btn btn-primary col-5 order-1">
+                    <button id="playbackButton" class="btn btn-primary col-5 order-1 d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-play-fill me-1" viewBox="0 0 16 16">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                        </svg>
                         Playback
                     </button>
                     <div class="col-5 p-0 mb-0 order-2 form-check form-switch d-flex justify-content-center align-items-center">
