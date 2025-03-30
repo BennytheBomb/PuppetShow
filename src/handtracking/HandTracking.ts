@@ -86,11 +86,18 @@ export class HandTracking {
         this._canvasCtx.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
         if (this._results?.landmarks) {
             for (const landmarks of this._results.landmarks) {
-                this.drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, {
+                const mirroredLandmarks = landmarks.map((landmark) => {
+                    return {
+                        x: 1 - landmark.x,
+                        y: landmark.y,
+                        z: landmark.z
+                    };
+                });
+                this.drawingUtils.drawConnectors(mirroredLandmarks, HandLandmarker.HAND_CONNECTIONS, {
                     color: "#00FF00",
                     lineWidth: 5
                 });
-                this.drawingUtils.drawLandmarks(landmarks, {color: "#FF0000", lineWidth: 0.1});
+                this.drawingUtils.drawLandmarks(mirroredLandmarks, {color: "#FF0000", lineWidth: 0.1});
             }
         }
 

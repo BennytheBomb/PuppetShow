@@ -22,7 +22,7 @@ export class HandScene {
     private _controls: OrbitControls;
     private _isPlaying = false;
     private _gltfLoader: GLTFLoader = new GLTFLoader();
-    private _textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
+    // private _textureLoader: THREE.CubeTextureLoader = new THREE.CubeTextureLoader();
     private _startPlaybackTime = -1;
     private _canvas: HTMLCanvasElement;
 
@@ -93,19 +93,30 @@ export class HandScene {
             console.error(error);
         });
 
-        const texture = this._textureLoader.load(
-            './background.png',
-            () => {
-                texture.mapping = THREE.EquirectangularReflectionMapping;
-                texture.colorSpace = THREE.SRGBColorSpace;
-                this._scene.background = texture;
-            });
+        this._scene.background = new THREE.CubeTextureLoader()
+            .setPath( 'background/' )
+            .load( [
+                'px.png',
+                'nx.png',
+                'py.png',
+                'ny.png',
+                'pz.png',
+                'nz.png'
+            ] );
+
+        // const texture = this._textureLoader.load(
+        //     './background.png',
+        //     () => {
+        //         texture.mapping = THREE.EquirectangularReflectionMapping;
+        //         texture.colorSpace = THREE.SRGBColorSpace;
+        //         this._scene.background = texture;
+        //     });
     }
 
     public onResize() {
-        this._renderer.setViewport(0, 0, this._canvas.clientWidth, this._canvas.clientHeight);
-        this._controls.reset();
-        this._controls.update();
+        this._renderer.setSize(this._canvas.clientWidth, this._canvas.clientHeight, false);
+        this._camera.aspect = this._canvas.clientWidth / this._canvas.clientHeight;
+        this._camera.updateProjectionMatrix();
     }
 
     private _onPlaybackFinished!: () => void;
