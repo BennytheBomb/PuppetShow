@@ -1,5 +1,7 @@
 # Puppet Show
 
+🎭 Try it out here: https://bennythebomb.github.io/PuppetShow/
+
 ## Requirements
 
 - Node.js (mine is v21.1.0)
